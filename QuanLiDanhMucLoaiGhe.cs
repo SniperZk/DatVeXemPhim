@@ -99,7 +99,8 @@ FROM LOAIGHE", connString);
 
         private void QuanLiDanhMucLoaiGhe_Load(object sender, EventArgs e)
         {
-            dataView.DataSource = table;
+            LinkTing.bindGroupBoxToTable(gbLoaiGhe, table, "Danh mục loại ghế ({0})");
+            LinkTing.setDoubleBuffered(dataView);
 
             try
             {
@@ -110,6 +111,9 @@ FROM LOAIGHE", connString);
                 MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
             }
+
+            dataView.DataSource = table;
+
         }
 
         private void dataView_SelectionChanged(object sender, EventArgs e)

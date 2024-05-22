@@ -15,7 +15,7 @@ namespace DatVeXemPhim
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.Run(new QuanLiDanhMucPhim());
+            Application.Run(new QuanLiDanhMucSuatChieu());
         }
     }
 }

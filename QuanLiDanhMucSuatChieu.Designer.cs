@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             label1 = new System.Windows.Forms.Label();
             groupBox1 = new System.Windows.Forms.GroupBox();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -52,6 +52,7 @@
             btnXoa = new System.Windows.Forms.Button();
             btnSua = new System.Windows.Forms.Button();
             btnThem = new System.Windows.Forms.Button();
+            btnNgauNhien = new System.Windows.Forms.Button();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
@@ -77,7 +78,7 @@
             groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            groupBox1.Size = new System.Drawing.Size(848, 154);
+            groupBox1.Size = new System.Drawing.Size(756, 154);
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông tin suất chiếu";
@@ -108,7 +109,7 @@
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            tableLayoutPanel1.Size = new System.Drawing.Size(842, 126);
+            tableLayoutPanel1.Size = new System.Drawing.Size(750, 126);
             tableLayoutPanel1.TabIndex = 1;
             // 
             // flowLayoutPanel1
@@ -125,6 +126,7 @@
             // dtGioHet
             // 
             dtGioHet.CustomFormat = "HH:mm";
+            dtGioHet.Enabled = false;
             dtGioHet.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             dtGioHet.Location = new System.Drawing.Point(3, 4);
             dtGioHet.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -166,6 +168,7 @@
             dtGioChieu.Size = new System.Drawing.Size(110, 27);
             dtGioChieu.TabIndex = 3;
             dtGioChieu.Value = new System.DateTime(2024, 5, 18, 0, 0, 0, 0);
+            dtGioChieu.ValueChanged += dtGioChieu_ValueChanged;
             // 
             // label8
             // 
@@ -265,14 +268,14 @@
             dataView.AllowUserToDeleteRows = false;
             dataView.AllowUserToResizeRows = false;
             dataView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 254);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            dataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 254);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            dataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataView.Location = new System.Drawing.Point(25, 268);
             dataView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -347,11 +350,22 @@
             btnThem.UseVisualStyleBackColor = true;
             btnThem.Click += btnThem_Click;
             // 
+            // btnNgauNhien
+            // 
+            btnNgauNhien.Location = new System.Drawing.Point(784, 183);
+            btnNgauNhien.Name = "btnNgauNhien";
+            btnNgauNhien.Size = new System.Drawing.Size(133, 32);
+            btnNgauNhien.TabIndex = 23;
+            btnNgauNhien.Text = "Nhập ngẫu nhiên";
+            btnNgauNhien.UseVisualStyleBackColor = true;
+            btnNgauNhien.Click += btnNgauNhien_Click;
+            // 
             // QuanLiDanhMucSuatChieu
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1055, 681);
+            Controls.Add(btnNgauNhien);
             Controls.Add(dataView);
             Controls.Add(btnLuu);
             Controls.Add(btnTaiLai);
@@ -400,5 +414,6 @@
         private System.Windows.Forms.Button btnXoa;
         private System.Windows.Forms.Button btnSua;
         private System.Windows.Forms.Button btnThem;
+        private System.Windows.Forms.Button btnNgauNhien;
     }
 }

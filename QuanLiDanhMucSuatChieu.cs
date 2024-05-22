@@ -20,6 +20,7 @@ namespace DatVeXemPhim
         private DataTable movieTable = new DataTable();
         private DataTable roomTable = new DataTable();
         private SqLiem sqliem;
+        private Faker faker = new Faker();
 
         public QuanLiDanhMucSuatChieu()
         {
@@ -30,8 +31,7 @@ ID_SUATCHIEU AS [Mã suất chiếu],
 ID_PHONGCHIEU AS [Mã phòng],
 ID_PHIM AS [Mã phim],
 NGAYCHIEU AS [Ngày chiếu],
-GIOBATDAU AS [Giờ bắt đầu],
-GIOKETTHUC AS [Giờ kết thúc]
+GIOBATDAU AS [Giờ bắt đầu]
 FROM SUATCHIEU
 ", connString);
         }
@@ -42,15 +42,11 @@ FROM SUATCHIEU
             {
                 return;
             }
-            table.Rows.Add(null, cbPhong.SelectedValue, cbPhim.SelectedValue, dtNgayChieu.Value, LinkTing.toTime(dtGioChieu.Value), LinkTing.toTime(dtGioHet.Value));
+            table.Rows.Add(null, cbPhong.SelectedValue, cbPhim.SelectedValue, dtNgayChieu.Value, LinkTing.toTime(dtGioChieu.Value));
         }
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (!LinkTing.checkDateTimePickerPair(dtGioChieu, dtGioHet, "Giờ chiếu phải sớm hơn giờ kết thúc."))
-            {
-                return;
-            }
             if (dataView.SelectedRows.Count != 1)
             {
                 return;
@@ -62,7 +58,6 @@ FROM SUATCHIEU
             row[colIndex++] = cbPhim.SelectedValue;
             row[colIndex++] = dtNgayChieu.Value.Date;
             row[colIndex++] = LinkTing.toTime(dtGioChieu.Value);
-            row[colIndex++] = LinkTing.toTime(dtGioHet.Value);
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
@@ -75,6 +70,7 @@ FROM SUATCHIEU
             try
             {
                 sqliem.load(table);
+                loadOtherTables();
             }
             catch (Exception ex)
             {
@@ -87,6 +83,7 @@ FROM SUATCHIEU
             try
             {
                 sqliem.update(table);
+                loadOtherTables();
             }
             catch (Exception ex)
             {
@@ -106,7 +103,6 @@ FROM SUATCHIEU
             cbPhim.SelectedValue = (string)row.Cells[colIndex++].Value;
             dtNgayChieu.Value = (DateTime)row.Cells[colIndex++].Value;
             dtGioChieu.Value = LinkTing.toDate((TimeSpan)row.Cells[colIndex++].Value);
-            dtGioHet.Value = LinkTing.toDate((TimeSpan)row.Cells[colIndex++].Value);
         }
 
         private void dataView_SelectionChanged(object sender, EventArgs e)
@@ -115,35 +111,41 @@ FROM SUATCHIEU
             btnXoa.Enabled = dataView.SelectedRows.Count > 0;
         }
 
+        private void loadOtherTables()
+        {
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("SELECT ID_PHONGCHIEU, TENPHONG FROM PHONGCHIEU", conn))
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    roomTable = new DataTable();
+                    roomTable.Load(reader);
+                    cbPhong.DataSource = roomTable;
+                    cbPhong.DisplayMember = "TENPHONG";
+                    cbPhong.ValueMember = "ID_PHONGCHIEU";
+                }
+
+                using (SqlCommand cmd = new SqlCommand("SELECT ID_PHIM, TENPHIM, THOILUONG, NGAYKHOICHIEU, NGAYCHIEUCUOI FROM PHIM", conn))
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    movieTable = new DataTable();
+                    movieTable.Load(reader);
+                    cbPhim.DisplayMember = "TENPHIM";
+                    cbPhim.ValueMember = "ID_PHIM";
+                    cbPhim.DataSource = movieTable;
+                }
+            }
+        }
+
         private void QuanLiDanhMucSuatChieu_Load(object sender, EventArgs e)
         {
+            LinkTing.setDoubleBuffered(dataView);
+
             try
             {
                 sqliem.load(table);
-
-                using (SqlConnection conn = new SqlConnection(connString))
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT ID_PHONGCHIEU, TENPHONG FROM PHONGCHIEU", conn))
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        roomTable = new DataTable();
-                        roomTable.Load(reader);
-                        cbPhong.DataSource = roomTable;
-                        cbPhong.DisplayMember = "TENPHONG";
-                        cbPhong.ValueMember = "ID_PHONGCHIEU";
-                    }
-
-                    using (SqlCommand cmd = new SqlCommand("SELECT ID_PHIM, TENPHIM, NGAYKHOICHIEU, NGAYCHIEUCUOI FROM PHIM", conn))
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        movieTable = new DataTable();
-                        movieTable.Load(reader);
-                        cbPhim.DisplayMember = "TENPHIM";
-                        cbPhim.ValueMember = "ID_PHIM";
-                        cbPhim.DataSource = movieTable;
-                    }
-                }
+                loadOtherTables();
             }
             catch (Exception ex)
             {
@@ -159,12 +161,9 @@ FROM SUATCHIEU
             if (cbPhim.SelectedValue != null)
             {
                 string movieId = (string)cbPhim.SelectedValue;
-                var result = from DataRow row in movieTable.Rows where row.Field<string>("ID_PHIM") == movieId select row;
-                var iterator = result.GetEnumerator();
-                iterator.MoveNext();
-                DataRow currRow = iterator.Current;
-                DateTime startDate = (DateTime)currRow["NGAYKHOICHIEU"];
-                DateTime endDate = (DateTime)currRow["NGAYCHIEUCUOI"];
+                DataRow row = movieTable.Select($"ID_PHIM = '{movieId}'")[0];
+                DateTime startDate = (DateTime)row["NGAYKHOICHIEU"];
+                DateTime endDate = (DateTime)row["NGAYCHIEUCUOI"];
                 if (startDate > dtNgayChieu.MaxDate)
                 {
                     dtNgayChieu.MaxDate = endDate;
@@ -177,6 +176,7 @@ FROM SUATCHIEU
 
                 }
             }
+            dtGioChieu_ValueChanged(sender, e);
         }
 
         private void dataView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -197,6 +197,23 @@ FROM SUATCHIEU
                     }
                 default:
                     break;
+            }
+        }
+
+        private void dtGioChieu_ValueChanged(object sender, EventArgs e)
+        {
+            if (cbPhim.SelectedValue != null)
+            {
+                string movieId = (string)cbPhim.SelectedValue;
+                TimeSpan duration = (TimeSpan)movieTable.Select($"ID_PHIM = '{movieId}'")[0][2];
+                dtGioHet.Value = dtGioChieu.Value.Add(duration);
+            }
+        }
+
+        private void btnNgauNhien_Click(object sender, EventArgs e)
+        {
+            if (roomTable.Rows.Count > 0 && movieTable.Rows.Count > 0)
+            {
             }
         }
     }

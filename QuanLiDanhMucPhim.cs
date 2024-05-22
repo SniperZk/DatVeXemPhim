@@ -44,8 +44,9 @@ FROM PHIM", connString);
             cbDoTuoi.Items.AddRange(new string[] { "P", "K", "T13", "T16", "T18" });
             cbDoTuoi.SelectedIndex = 0;
 
-            dataView.DataSource = table;
-
+            LinkTing.bindGroupBoxToTable(gbPhim, table, "Danh mục phim ({0})");
+            LinkTing.setDoubleBuffered(dataView);
+            
             try
             {
                 sqliem.load(table);
@@ -55,6 +56,8 @@ FROM PHIM", connString);
                 MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
             }
+
+            dataView.DataSource = table;
         }
 
         private void btnRong_Click(object sender, EventArgs e)
@@ -65,6 +68,10 @@ FROM PHIM", connString);
         private void btnThem_Click(object sender, EventArgs e)
         {
             if (!LinkTing.checkEmptyTextBox(txtTieuDe, "Vui lòng nhập tiêu đề phim."))
+            {
+                return;
+            }
+            if (!LinkTing.checkDateTimePickerPair(dtKhoiChieu, dtChieuCuoi, "Ngày khởi chiếu phải sớm hơn ngày chiếu cuối."))
             {
                 return;
             }
@@ -135,7 +142,18 @@ FROM PHIM", connString);
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            LinkTing.deleteDataGridViewSelectedRows(dataView);
+            foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
+            {
+                var value = selectedRow.Cells[0].Value;
+                if (value != DBNull.Value)
+                {
+                    if (!sqliem.notUsedInTable((string)value, "SUATCHIEU", "ID_PHIM", "Không thể xoá phim này vì đang có {0} suất chiếu phim này."))
+                    {
+                        continue;
+                    }
+                }
+                ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
+            }
         }
 
         private void btnNgauNhien_Click(object sender, EventArgs e)
@@ -169,7 +187,7 @@ FROM PHIM", connString);
                         category = faker.randomCategory();
                     }
                     DateTime khoiChieu = faker.randomDate();
-                    table.Rows.Add(null, null, faker.randomTitle(category), category, faker.randomDuration(), khoiChieu.Date, khoiChieu.AddDays(faker.randInt(31)).Date, faker.randomRating());
+                    table.Rows.Add(null, faker.randomTitle(category), category, faker.randomDuration(), khoiChieu.Date, khoiChieu.AddDays(faker.randInt(31)).Date, faker.randomRating());
                 }
             }
         }

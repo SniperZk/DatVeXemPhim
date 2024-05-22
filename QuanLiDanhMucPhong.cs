@@ -59,7 +59,18 @@ FROM PHONGCHIEU", connString);
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            LinkTing.deleteDataGridViewSelectedRows(dataView);
+            foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
+            {
+                var value = selectedRow.Cells[0].Value;
+                if (value != DBNull.Value)
+                {
+                    if (!sqliem.notUsedInTable((string)value, "SUATCHIEU", "ID_PHONGCHIEU", "Không thể xoá phòng này vì có {0} suất chiếu ở phòng này."))
+                    {
+                        continue;
+                    }
+                }
+                ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
+            }
         }
 
         private void dataView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -98,7 +109,8 @@ FROM PHONGCHIEU", connString);
 
         private void QuanLiDanhMucPhong_Load(object sender, EventArgs e)
         {
-            dataView.DataSource = table;
+            LinkTing.bindGroupBoxToTable(gbPhong, table, "Danh mục phòng ({0})");
+            LinkTing.setDoubleBuffered(dataView);
 
             try
             {
@@ -109,6 +121,8 @@ FROM PHONGCHIEU", connString);
                 MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
             }
+
+            dataView.DataSource = table;
         }
 
         private void dataView_SelectionChanged(object sender, EventArgs e)

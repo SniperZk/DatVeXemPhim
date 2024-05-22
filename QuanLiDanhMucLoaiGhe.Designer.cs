@@ -40,14 +40,16 @@
             label2 = new System.Windows.Forms.Label();
             txtTen = new System.Windows.Forms.TextBox();
             label1 = new System.Windows.Forms.Label();
+            gbLoaiGhe = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)dataView).BeginInit();
             groupBox1.SuspendLayout();
+            gbLoaiGhe.SuspendLayout();
             SuspendLayout();
             // 
             // btnLuu
             // 
             btnLuu.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnLuu.Location = new System.Drawing.Point(473, 514);
+            btnLuu.Location = new System.Drawing.Point(490, 562);
             btnLuu.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnLuu.Name = "btnLuu";
             btnLuu.Size = new System.Drawing.Size(75, 32);
@@ -59,7 +61,7 @@
             // btnTaiLai
             // 
             btnTaiLai.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnTaiLai.Location = new System.Drawing.Point(392, 514);
+            btnTaiLai.Location = new System.Drawing.Point(409, 562);
             btnTaiLai.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnTaiLai.Name = "btnTaiLai";
             btnTaiLai.Size = new System.Drawing.Size(75, 32);
@@ -84,7 +86,7 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             dataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataView.Location = new System.Drawing.Point(12, 179);
+            dataView.Location = new System.Drawing.Point(6, 27);
             dataView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             dataView.MultiSelect = false;
             dataView.Name = "dataView";
@@ -94,7 +96,7 @@
             dataView.RowTemplate.Height = 24;
             dataView.RowTemplate.ReadOnly = true;
             dataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dataView.Size = new System.Drawing.Size(537, 327);
+            dataView.Size = new System.Drawing.Size(542, 343);
             dataView.TabIndex = 25;
             dataView.CellDoubleClick += dataView_CellDoubleClick;
             dataView.SelectionChanged += dataView_SelectionChanged;
@@ -137,7 +139,7 @@
             // btnRong
             // 
             btnRong.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnRong.Location = new System.Drawing.Point(392, 89);
+            btnRong.Location = new System.Drawing.Point(409, 89);
             btnRong.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnRong.Name = "btnRong";
             btnRong.Size = new System.Drawing.Size(111, 32);
@@ -153,7 +155,7 @@
             groupBox1.Controls.Add(txtTen);
             groupBox1.Location = new System.Drawing.Point(12, 62);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(374, 70);
+            groupBox1.Size = new System.Drawing.Size(391, 70);
             groupBox1.TabIndex = 20;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông tin loại ghế";
@@ -175,7 +177,7 @@
             txtTen.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             txtTen.MaxLength = 100;
             txtTen.Name = "txtTen";
-            txtTen.Size = new System.Drawing.Size(266, 27);
+            txtTen.Size = new System.Drawing.Size(283, 27);
             txtTen.TabIndex = 3;
             // 
             // label1
@@ -183,20 +185,30 @@
             label1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 254);
-            label1.Location = new System.Drawing.Point(119, 18);
+            label1.Location = new System.Drawing.Point(128, 18);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(340, 29);
             label1.TabIndex = 19;
             label1.Text = "Quản lý danh mục loại ghế";
             // 
+            // gbLoaiGhe
+            // 
+            gbLoaiGhe.Controls.Add(dataView);
+            gbLoaiGhe.Location = new System.Drawing.Point(12, 178);
+            gbLoaiGhe.Name = "gbLoaiGhe";
+            gbLoaiGhe.Size = new System.Drawing.Size(554, 377);
+            gbLoaiGhe.TabIndex = 28;
+            gbLoaiGhe.TabStop = false;
+            gbLoaiGhe.Text = "Danh mục loại ghế (0)";
+            // 
             // QuanLiDanhMucLoaiGhe
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(561, 559);
+            ClientSize = new System.Drawing.Size(578, 607);
+            Controls.Add(gbLoaiGhe);
             Controls.Add(btnLuu);
             Controls.Add(btnTaiLai);
-            Controls.Add(dataView);
             Controls.Add(btnXoa);
             Controls.Add(btnSua);
             Controls.Add(btnThem);
@@ -209,6 +221,7 @@
             ((System.ComponentModel.ISupportInitialize)dataView).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            gbLoaiGhe.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -226,5 +239,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtTen;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox gbLoaiGhe;
     }
 }

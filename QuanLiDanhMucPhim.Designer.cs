@@ -58,11 +58,13 @@
             btnThemNgauNhien = new System.Windows.Forms.Button();
             txtTim = new System.Windows.Forms.TextBox();
             label9 = new System.Windows.Forms.Label();
+            gbPhim = new System.Windows.Forms.GroupBox();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataView).BeginInit();
             flowLayoutPanel2.SuspendLayout();
+            gbPhim.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -334,8 +336,7 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             dataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataView.Location = new System.Drawing.Point(16, 256);
-            dataView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            dataView.Location = new System.Drawing.Point(6, 27);
             dataView.MultiSelect = false;
             dataView.Name = "dataView";
             dataView.ReadOnly = true;
@@ -344,7 +345,7 @@
             dataView.RowTemplate.Height = 24;
             dataView.RowTemplate.ReadOnly = true;
             dataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dataView.Size = new System.Drawing.Size(953, 347);
+            dataView.Size = new System.Drawing.Size(941, 316);
             dataView.TabIndex = 14;
             dataView.CellDoubleClick += dataView_CellDoubleClick;
             dataView.SelectionChanged += dataView_SelectionChanged;
@@ -415,14 +416,25 @@
             label9.TabIndex = 0;
             label9.Text = "Lọc theo tên";
             // 
+            // gbPhim
+            // 
+            gbPhim.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            gbPhim.Controls.Add(dataView);
+            gbPhim.Location = new System.Drawing.Point(16, 255);
+            gbPhim.Name = "gbPhim";
+            gbPhim.Size = new System.Drawing.Size(953, 349);
+            gbPhim.TabIndex = 17;
+            gbPhim.TabStop = false;
+            gbPhim.Text = "Danh mục phim (0)";
+            // 
             // QuanLiDanhMucPhim
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(983, 656);
+            Controls.Add(gbPhim);
             Controls.Add(txtTim);
             Controls.Add(flowLayoutPanel2);
-            Controls.Add(dataView);
             Controls.Add(label9);
             Controls.Add(btnLuu);
             Controls.Add(btnTaiLai);
@@ -442,6 +454,7 @@
             flowLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataView).EndInit();
             flowLayoutPanel2.ResumeLayout(false);
+            gbPhim.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -477,5 +490,6 @@
         private System.Windows.Forms.Button btnThemNgauNhien;
         private System.Windows.Forms.TextBox txtTim;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.GroupBox gbPhim;
     }
 }
