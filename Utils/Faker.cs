@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace DatVeXemPhim.Utils
@@ -122,6 +123,10 @@ namespace DatVeXemPhim.Utils
             return words;
         }
 
+        public int randInt()
+        {
+            return rand.Next();
+        }
         public int randInt(int max)
         {
             return rand.Next(max);
@@ -136,6 +141,18 @@ namespace DatVeXemPhim.Utils
             while (choice.CompareTo(lastChoice) == 0)
             {
                 choice = list[rand.Next(list.Count)];
+            }
+            return choice;
+        }
+        public DataRow randRow(DataTable table, DataRow? lastChoice = null)
+        {
+            DataRow choice = table.Rows[rand.Next(table.Rows.Count)];
+            if (lastChoice != null)
+            {
+                while (choice == lastChoice)
+                {
+                    choice = table.Rows[rand.Next(table.Rows.Count)];
+                }
             }
             return choice;
         }
@@ -261,6 +278,11 @@ namespace DatVeXemPhim.Utils
         {
             DateTime start = DateTime.Today - TimeSpan.FromDays(14);
             return start.AddDays(rand.Next(14));
+        }
+        public DateTime randomDate(DateTime from, DateTime to)
+        {
+            int days = to.Subtract(from).Days;
+            return from.AddDays(rand.Next(days+1));
         }
         public TimeSpan randomDuration()
         {

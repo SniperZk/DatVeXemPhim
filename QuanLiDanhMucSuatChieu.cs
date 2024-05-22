@@ -205,15 +205,88 @@ FROM SUATCHIEU
             if (cbPhim.SelectedValue != null)
             {
                 string movieId = (string)cbPhim.SelectedValue;
-                TimeSpan duration = (TimeSpan)movieTable.Select($"ID_PHIM = '{movieId}'")[0][2];
+                TimeSpan duration = (TimeSpan)movieTable.Select($"ID_PHIM = '{movieId}'")[0]["THOILUONG"];
                 dtGioHet.Value = dtGioChieu.Value.Add(duration);
             }
         }
 
         private void btnNgauNhien_Click(object sender, EventArgs e)
         {
-            if (roomTable.Rows.Count > 0 && movieTable.Rows.Count > 0)
+            int roomCount = roomTable.Rows.Count;
+            if (roomCount > 0 && movieTable.Rows.Count > 0)
             {
+                foreach (int roomI in Enumerable.Range(0, roomCount-1).OrderBy(x => faker.randInt()))
+                {
+                    DataRow room = roomTable.Rows[roomI];
+                    for (int _ = 0; _ < 10; _++)
+                    {
+                        DataRow movie = faker.randRow(movieTable);
+                        string movieId = (string)movie[0];
+                        TimeSpan duration = (TimeSpan)movie["THOILUONG"];
+                        DateTime startDate = (DateTime)movie["NGAYKHOICHIEU"];
+                        DateTime endDate = (DateTime)movie["NGAYCHIEUCUOI"];
+                        DateTime date = faker.randomDate(startDate, endDate);
+                        var sessionsResult = from row in table.AsEnumerable()
+                                             where row.RowState != DataRowState.Deleted
+                                             && row.Field<string>("Mã phim") == movieId
+                                             && row.Field<DateTime>("Ngày chiếu") == date
+                                             select row;
+                        if (sessionsResult.Any())
+                        {
+                            DataRow[] sessions = sessionsResult.ToArray();
+                            TimeSpan breakTime = new TimeSpan(0, 15, 0);
+                            for (int i = 0; i < sessions.Length; i++)
+                            {
+                                DataRow session = sessions[i];
+                                if (i < sessions.Length - 1)
+                                {
+                                    TimeSpan currShowTime = session.Field<TimeSpan>("Giờ bắt đầu");
+                                    TimeSpan currDuration = (TimeSpan)movieTable.Select($"ID_PHIM = '{(string)session["Mã phim"]}'")[0]["THOILUONG"];
+                                    TimeSpan currEndTime = currShowTime + duration;
+
+                                    TimeSpan targetShowTime;
+                                    TimeSpan targetEndTime;
+
+                                    if (i != 0)
+                                    {
+                                        TimeSpan prevShowTime = sessions[i - 1].Field<TimeSpan>("Giờ bắt đầu");
+                                        TimeSpan prevDuration = (TimeSpan)movieTable.Select($"ID_PHIM = '{(string)session["Mã phim"]}'")[0]["THOILUONG"];
+                                        TimeSpan prevEndTime = prevShowTime + prevDuration;
+
+                                        targetShowTime = currShowTime - breakTime - duration;
+                                        if (prevEndTime <= targetShowTime && targetShowTime < TimeSpan.Zero)
+                                        {
+                                            cbPhong.SelectedValue = room[0];
+                                            cbPhim.SelectedValue = movieId;
+                                            dtNgayChieu.Value = date;
+                                            dtGioChieu.Value = LinkTing.toDate(targetShowTime);
+                                            return;
+                                        }
+                                    }
+
+                                    targetShowTime = currEndTime + breakTime;
+                                    targetEndTime = targetShowTime + duration;
+                                    TimeSpan nextShowTime = sessions[i + 1].Field<TimeSpan>("Giờ bắt đầu");
+                                    if (nextShowTime >= targetEndTime && targetEndTime.Days == 0)
+                                    {
+                                        cbPhong.SelectedValue = room[0];
+                                        cbPhim.SelectedValue = movieId;
+                                        dtNgayChieu.Value = date;
+                                        dtGioChieu.Value = LinkTing.toDate(targetShowTime);
+                                        return;
+                                    }
+                                }
+                            }
+                        } else
+                        {
+                            cbPhong.SelectedValue = room[0];
+                            cbPhim.SelectedValue = movieId;
+                            dtNgayChieu.Value = date;
+                            dtGioChieu.Value = LinkTing.toDate(new TimeSpan(8, 0, 0));
+                            return;
+                        }
+                    }
+                }
             }
         }
     }

@@ -64,8 +64,10 @@ FROM PHONGCHIEU", connString);
                 var value = selectedRow.Cells[0].Value;
                 if (value != DBNull.Value)
                 {
-                    if (!sqliem.notUsedInTable((string)value, "SUATCHIEU", "ID_PHONGCHIEU", "Không thể xoá phòng này vì có {0} suất chiếu ở phòng này."))
+                    int count;
+                    if ((count = sqliem.countUsageInTable((string)value, "SUATCHIEU", "ID_PHONGCHIEU")) > 0)
                     {
+                        MessageBox.Show($"Không thể xoá phim này vì có {count} suất chiếu ở phòng này.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         continue;
                     }
                 }

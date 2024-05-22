@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using System.Windows.Forms;
 
 namespace DatVeXemPhim.Utils
 {
@@ -43,7 +42,7 @@ namespace DatVeXemPhim.Utils
             adapter.Fill(table);
         }
 
-        public bool notUsedInTable(string id, string tableName, string tableCol, string template)
+        public int countUsageInTable(string id, string tableName, string tableCol)
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
@@ -53,14 +52,9 @@ namespace DatVeXemPhim.Utils
                     cmd.Parameters.AddWithValue("id", id);
                     var res = cmd.ExecuteScalar();
                     int count = (res != null) ? (int)res : 0;
-                    if (count > 0)
-                    {
-                        MessageBox.Show(string.Format(template, count), "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return false;
-                    }
+                    return count;
                 }
             }
-            return true;
         }
     }
 }
