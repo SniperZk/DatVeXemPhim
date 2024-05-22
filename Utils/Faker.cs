@@ -131,6 +131,10 @@ namespace DatVeXemPhim.Utils
         {
             return rand.Next(max);
         }
+        public IEnumerable<int> randEnumRange(int max)
+        {
+            return Enumerable.Range(0, max).OrderBy(x => rand.Next());
+        }
         public T randChoice<T>(IReadOnlyList<T> list)
         {
             return list[rand.Next(list.Count)];

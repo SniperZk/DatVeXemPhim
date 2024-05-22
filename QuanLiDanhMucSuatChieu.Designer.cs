@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             label1 = new System.Windows.Forms.Label();
             groupBox1 = new System.Windows.Forms.GroupBox();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -53,11 +53,16 @@
             btnSua = new System.Windows.Forms.Button();
             btnThem = new System.Windows.Forms.Button();
             btnNgauNhien = new System.Windows.Forms.Button();
+            flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+            btnThemNgauNhien = new System.Windows.Forms.Button();
+            gbSuatChieu = new System.Windows.Forms.GroupBox();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataView).BeginInit();
+            flowLayoutPanel3.SuspendLayout();
+            gbSuatChieu.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -65,7 +70,7 @@
             label1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 254);
-            label1.Location = new System.Drawing.Point(331, 32);
+            label1.Location = new System.Drawing.Point(301, 27);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(369, 29);
             label1.TabIndex = 1;
@@ -74,7 +79,7 @@
             // groupBox1
             // 
             groupBox1.Controls.Add(tableLayoutPanel1);
-            groupBox1.Location = new System.Drawing.Point(22, 65);
+            groupBox1.Location = new System.Drawing.Point(15, 65);
             groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -267,17 +272,18 @@
             dataView.AllowUserToAddRows = false;
             dataView.AllowUserToDeleteRows = false;
             dataView.AllowUserToResizeRows = false;
+            dataView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             dataView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 254);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            dataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 254);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            dataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataView.Location = new System.Drawing.Point(25, 268);
+            dataView.Location = new System.Drawing.Point(6, 27);
             dataView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             dataView.MultiSelect = false;
             dataView.Name = "dataView";
@@ -287,7 +293,7 @@
             dataView.RowTemplate.Height = 24;
             dataView.RowTemplate.ReadOnly = true;
             dataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dataView.Size = new System.Drawing.Size(953, 347);
+            dataView.Size = new System.Drawing.Size(941, 338);
             dataView.TabIndex = 20;
             dataView.CellDoubleClick += dataView_CellDoubleClick;
             dataView.CellFormatting += dataView_CellFormatting;
@@ -295,7 +301,8 @@
             // 
             // btnLuu
             // 
-            btnLuu.Location = new System.Drawing.Point(903, 623);
+            btnLuu.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnLuu.Location = new System.Drawing.Point(896, 647);
             btnLuu.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnLuu.Name = "btnLuu";
             btnLuu.Size = new System.Drawing.Size(75, 32);
@@ -306,7 +313,8 @@
             // 
             // btnTaiLai
             // 
-            btnTaiLai.Location = new System.Drawing.Point(822, 623);
+            btnTaiLai.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnTaiLai.Location = new System.Drawing.Point(815, 647);
             btnTaiLai.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnTaiLai.Name = "btnTaiLai";
             btnTaiLai.Size = new System.Drawing.Size(75, 32);
@@ -318,7 +326,7 @@
             // btnXoa
             // 
             btnXoa.Enabled = false;
-            btnXoa.Location = new System.Drawing.Point(187, 228);
+            btnXoa.Location = new System.Drawing.Point(180, 228);
             btnXoa.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnXoa.Name = "btnXoa";
             btnXoa.Size = new System.Drawing.Size(75, 32);
@@ -330,7 +338,7 @@
             // btnSua
             // 
             btnSua.Enabled = false;
-            btnSua.Location = new System.Drawing.Point(106, 228);
+            btnSua.Location = new System.Drawing.Point(99, 228);
             btnSua.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnSua.Name = "btnSua";
             btnSua.Size = new System.Drawing.Size(75, 32);
@@ -341,7 +349,7 @@
             // 
             // btnThem
             // 
-            btnThem.Location = new System.Drawing.Point(25, 228);
+            btnThem.Location = new System.Drawing.Point(18, 228);
             btnThem.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnThem.Name = "btnThem";
             btnThem.Size = new System.Drawing.Size(75, 32);
@@ -352,21 +360,52 @@
             // 
             // btnNgauNhien
             // 
-            btnNgauNhien.Location = new System.Drawing.Point(784, 183);
+            btnNgauNhien.Location = new System.Drawing.Point(3, 3);
             btnNgauNhien.Name = "btnNgauNhien";
             btnNgauNhien.Size = new System.Drawing.Size(133, 32);
             btnNgauNhien.TabIndex = 23;
-            btnNgauNhien.Text = "Nhập ngẫu nhiên";
+            btnNgauNhien.Text = "Điền ngẫu nhiên";
             btnNgauNhien.UseVisualStyleBackColor = true;
             btnNgauNhien.Click += btnNgauNhien_Click;
+            // 
+            // flowLayoutPanel3
+            // 
+            flowLayoutPanel3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            flowLayoutPanel3.Controls.Add(btnNgauNhien);
+            flowLayoutPanel3.Controls.Add(btnThemNgauNhien);
+            flowLayoutPanel3.Location = new System.Drawing.Point(774, 128);
+            flowLayoutPanel3.Name = "flowLayoutPanel3";
+            flowLayoutPanel3.Size = new System.Drawing.Size(197, 86);
+            flowLayoutPanel3.TabIndex = 24;
+            // 
+            // btnThemNgauNhien
+            // 
+            btnThemNgauNhien.Location = new System.Drawing.Point(3, 41);
+            btnThemNgauNhien.Name = "btnThemNgauNhien";
+            btnThemNgauNhien.Size = new System.Drawing.Size(133, 32);
+            btnThemNgauNhien.TabIndex = 23;
+            btnThemNgauNhien.Text = "Thêm ngẫu nhiên";
+            btnThemNgauNhien.UseVisualStyleBackColor = true;
+            btnThemNgauNhien.Click += btnThemNgauNhien_Click;
+            // 
+            // gbSuatChieu
+            // 
+            gbSuatChieu.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            gbSuatChieu.Controls.Add(dataView);
+            gbSuatChieu.Location = new System.Drawing.Point(18, 267);
+            gbSuatChieu.Name = "gbSuatChieu";
+            gbSuatChieu.Size = new System.Drawing.Size(953, 372);
+            gbSuatChieu.TabIndex = 25;
+            gbSuatChieu.TabStop = false;
+            gbSuatChieu.Text = "Danh mục suất chiếu (0)";
             // 
             // QuanLiDanhMucSuatChieu
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1055, 681);
-            Controls.Add(btnNgauNhien);
-            Controls.Add(dataView);
+            ClientSize = new System.Drawing.Size(987, 692);
+            Controls.Add(gbSuatChieu);
+            Controls.Add(flowLayoutPanel3);
             Controls.Add(btnLuu);
             Controls.Add(btnTaiLai);
             Controls.Add(btnXoa);
@@ -385,6 +424,8 @@
             flowLayoutPanel2.ResumeLayout(false);
             flowLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataView).EndInit();
+            flowLayoutPanel3.ResumeLayout(false);
+            gbSuatChieu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -415,5 +456,8 @@
         private System.Windows.Forms.Button btnSua;
         private System.Windows.Forms.Button btnThem;
         private System.Windows.Forms.Button btnNgauNhien;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
+        private System.Windows.Forms.GroupBox gbSuatChieu;
+        private System.Windows.Forms.Button btnThemNgauNhien;
     }
 }

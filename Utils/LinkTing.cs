@@ -25,6 +25,20 @@ namespace DatVeXemPhim.Utils
             }
         }
 
+        public static bool checkEmptyComboBox(ComboBox comboBox, string msg)
+        {
+            if (string.IsNullOrWhiteSpace(comboBox.Text))
+            {
+                MessageBox.Show(msg, "Thiếu dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                comboBox.Focus();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public static bool checkDateTimePickerPair(DateTimePicker picker1, DateTimePicker picker2, string msg)
         {
             if (picker1.Value > picker2.Value)

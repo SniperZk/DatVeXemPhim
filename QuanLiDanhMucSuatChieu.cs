@@ -13,9 +13,53 @@ using Microsoft.Data.SqlClient;
 
 namespace DatVeXemPhim
 {
+    public struct TimeRange
+    {
+        public TimeSpan start;
+        public TimeSpan duration;
+        public TimeSpan end {
+            get
+            {
+                return start + duration;
+            }
+        }
+
+        public TimeRange(DataRow row, DataTable movieTable)
+        {
+            start = row.Field<TimeSpan>("Giờ bắt đầu");
+            duration = (TimeSpan)movieTable.Select($"ID_PHIM = '{(string)row["Mã phim"]}'")[0]["THOILUONG"];
+        }
+
+        public bool Overlap(TimeRange otherRange)
+        {
+            if (otherRange.start >= start && otherRange.start <= end)
+            {
+                return true;
+            }
+            if (end >= otherRange.start && end <= otherRange.end)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public struct Session
+    {
+        public string roomId;
+        public string movieId;
+        public DateTime date;
+        public TimeSpan time;
+    }
+
+
+
     public partial class QuanLiDanhMucSuatChieu : Form
     {
         private readonly static string connString = "Initial Catalog=CINEMA_PROJECT;Data Source=LAPTOP-P1DI0588\\SQLEXPRESS;TrustServerCertificate=True;Trusted_Connection=True";
+        private readonly static TimeSpan breakTime = new TimeSpan(0, 15, 0);
+        private readonly static TimeSpan startOfDay = new TimeSpan(8, 0, 0);
+
         private DataTable table = new DataTable();
         private DataTable movieTable = new DataTable();
         private DataTable roomTable = new DataTable();
@@ -36,18 +80,62 @@ FROM SUATCHIEU
 ", connString);
         }
 
+        private bool checkInputValid()
+        {
+            if (!LinkTing.checkEmptyComboBox(cbPhim, "Vui lòng chọn phim."))
+            {
+                return false;
+            }
+            if (!LinkTing.checkEmptyComboBox(cbPhong, "Vui lòng chọn phòng chiếu."))
+            {
+                return false;
+            }
+            if (LinkTing.toTime(dtGioHet.Value) < LinkTing.toTime(dtGioChieu.Value))
+            {
+                MessageBox.Show("Thời gian bắt đầu và kết thúc phải nằm trong cùng một ngày.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dtGioChieu.Focus();
+                return false;
+            }
+
+            TimeRange range = new TimeRange()
+            {
+                start = LinkTing.toTime(dtGioChieu.Value),
+                duration = (TimeSpan)movieTable.Select($"ID_PHIM = '{cbPhim.SelectedValue as string}'")[0]["THOILUONG"],
+            };
+            var result = from row in table.AsEnumerable()
+                         where row.RowState != DataRowState.Deleted
+                         && row.Field<string>("Mã phòng") == cbPhong.SelectedValue as string
+                         && row.Field<DateTime>("Ngày chiếu") == dtNgayChieu.Value
+                         select row;
+            foreach (DataRow row in result)
+            {
+                 if (range.Overlap(new TimeRange(row, movieTable))) {
+                    MessageBox.Show($"Suất chiếu này bị trùng thời gian với suất chiếu lúc {row["Giờ bắt đầu"]} cùng ngày.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    dtGioChieu.Focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private void btnThem_Click(object sender, EventArgs e)
         {
-            if (!LinkTing.checkDateTimePickerPair(dtGioChieu, dtGioHet, "Giờ chiếu phải sớm hơn giờ kết thúc."))
+            if (!checkInputValid())
             {
                 return;
             }
+
             table.Rows.Add(null, cbPhong.SelectedValue, cbPhim.SelectedValue, dtNgayChieu.Value, LinkTing.toTime(dtGioChieu.Value));
         }
 
         private void btnSua_Click(object sender, EventArgs e)
         {
             if (dataView.SelectedRows.Count != 1)
+            {
+                return;
+            }
+            if (!checkInputValid())
             {
                 return;
             }
@@ -82,12 +170,20 @@ FROM SUATCHIEU
         {
             try
             {
-                sqliem.update(table);
+                btnLuu.Enabled = false;
+                Cursor = Cursors.WaitCursor;
+                int affected = sqliem.update(table);
                 loadOtherTables();
+                MessageBox.Show($"Cập nhật thành công, đã thao tác lên {affected} dòng dữ liệu.", "Cập nhật thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+                btnLuu.Enabled = true;
             }
         }
 
@@ -141,6 +237,7 @@ FROM SUATCHIEU
         private void QuanLiDanhMucSuatChieu_Load(object sender, EventArgs e)
         {
             LinkTing.setDoubleBuffered(dataView);
+            LinkTing.bindGroupBoxToTable(gbSuatChieu, table, "Danh mục suất chiếu ({0})");
 
             try
             {
@@ -210,83 +307,117 @@ FROM SUATCHIEU
             }
         }
 
-        private void btnNgauNhien_Click(object sender, EventArgs e)
+        private Session? randomSession()
         {
             int roomCount = roomTable.Rows.Count;
             if (roomCount > 0 && movieTable.Rows.Count > 0)
             {
-                foreach (int roomI in Enumerable.Range(0, roomCount-1).OrderBy(x => faker.randInt()))
+                foreach (int roomI in faker.randEnumRange(roomCount))
                 {
                     DataRow room = roomTable.Rows[roomI];
-                    for (int _ = 0; _ < 10; _++)
+                    string roomId = (string)room[0];
+                    foreach (int movieI in faker.randEnumRange(movieTable.Rows.Count))
                     {
-                        DataRow movie = faker.randRow(movieTable);
-                        string movieId = (string)movie[0];
+                        DataRow movie = movieTable.Rows[movieI];
                         TimeSpan duration = (TimeSpan)movie["THOILUONG"];
                         DateTime startDate = (DateTime)movie["NGAYKHOICHIEU"];
                         DateTime endDate = (DateTime)movie["NGAYCHIEUCUOI"];
                         DateTime date = faker.randomDate(startDate, endDate);
+                        TimeRange? targetRange = null;
                         var sessionsResult = from row in table.AsEnumerable()
                                              where row.RowState != DataRowState.Deleted
-                                             && row.Field<string>("Mã phim") == movieId
+                                             && row.Field<string>("Mã phòng") == roomId
                                              && row.Field<DateTime>("Ngày chiếu") == date
+                                             orderby row.Field<TimeSpan>("Giờ bắt đầu") ascending
                                              select row;
                         if (sessionsResult.Any())
                         {
                             DataRow[] sessions = sessionsResult.ToArray();
-                            TimeSpan breakTime = new TimeSpan(0, 15, 0);
+                            TimeRange[] ranges = (from row in sessions.AsEnumerable() select new TimeRange(row, movieTable)).ToArray();
+
                             for (int i = 0; i < sessions.Length; i++)
                             {
                                 DataRow session = sessions[i];
-                                if (i < sessions.Length - 1)
+                                TimeRange currRange = ranges[i];
+
+                                TimeRange range = new TimeRange()
                                 {
-                                    TimeSpan currShowTime = session.Field<TimeSpan>("Giờ bắt đầu");
-                                    TimeSpan currDuration = (TimeSpan)movieTable.Select($"ID_PHIM = '{(string)session["Mã phim"]}'")[0]["THOILUONG"];
-                                    TimeSpan currEndTime = currShowTime + duration;
-
-                                    TimeSpan targetShowTime;
-                                    TimeSpan targetEndTime;
-
-                                    if (i != 0)
+                                    start = currRange.start - breakTime - duration,
+                                    duration = duration,
+                                };
+                                if (i != 0)
+                                {
+                                    if (!range.Overlap(ranges[i - 1]))
                                     {
-                                        TimeSpan prevShowTime = sessions[i - 1].Field<TimeSpan>("Giờ bắt đầu");
-                                        TimeSpan prevDuration = (TimeSpan)movieTable.Select($"ID_PHIM = '{(string)session["Mã phim"]}'")[0]["THOILUONG"];
-                                        TimeSpan prevEndTime = prevShowTime + prevDuration;
-
-                                        targetShowTime = currShowTime - breakTime - duration;
-                                        if (prevEndTime <= targetShowTime && targetShowTime < TimeSpan.Zero)
-                                        {
-                                            cbPhong.SelectedValue = room[0];
-                                            cbPhim.SelectedValue = movieId;
-                                            dtNgayChieu.Value = date;
-                                            dtGioChieu.Value = LinkTing.toDate(targetShowTime);
-                                            return;
-                                        }
-                                    }
-
-                                    targetShowTime = currEndTime + breakTime;
-                                    targetEndTime = targetShowTime + duration;
-                                    TimeSpan nextShowTime = sessions[i + 1].Field<TimeSpan>("Giờ bắt đầu");
-                                    if (nextShowTime >= targetEndTime && targetEndTime.Days == 0)
-                                    {
-                                        cbPhong.SelectedValue = room[0];
-                                        cbPhim.SelectedValue = movieId;
-                                        dtNgayChieu.Value = date;
-                                        dtGioChieu.Value = LinkTing.toDate(targetShowTime);
-                                        return;
+                                        targetRange = range;
+                                        break;
                                     }
                                 }
+                                range.start = currRange.end + breakTime;
+                                if (i + 1 < sessions.Length)
+                                {
+                                    if (!range.Overlap(ranges[i + 1]) && range.end.Days == 0)
+                                    {
+                                        targetRange = range;
+                                        break;
+                                    }
+                                }
+                                else if (range.end.Days == 0)
+                                {
+                                    targetRange = range;
+                                    break;
+                                }
                             }
-                        } else
+                        }
+                        else
                         {
-                            cbPhong.SelectedValue = room[0];
-                            cbPhim.SelectedValue = movieId;
-                            dtNgayChieu.Value = date;
-                            dtGioChieu.Value = LinkTing.toDate(new TimeSpan(8, 0, 0));
-                            return;
+                            targetRange = new TimeRange()
+                            {
+                                start = startOfDay,
+                                duration = duration,
+                            };
+                        }
+                        if (targetRange != null)
+                        {
+                            return new Session()
+                            {
+                                roomId = roomId,
+                                movieId = (string)movie[0],
+                                date = date,
+                                time = targetRange.Value.start,
+                            };
                         }
                     }
                 }
+            }
+            return null;
+        }
+
+        private void btnNgauNhien_Click(object sender, EventArgs e)
+        {
+            Session? session = randomSession();
+            if (session is Session sessValue)
+            {
+                cbPhong.SelectedValue = sessValue.roomId;
+                cbPhim.SelectedValue = sessValue.movieId;
+                dtNgayChieu.Value = sessValue.date;
+                dtGioChieu.Value = LinkTing.toDate(sessValue.time);
+            }
+            else
+            {
+                MessageBox.Show("Hệ thống không thể xếp suất chiếu ngẫu nhiên.", "Thất bại", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnThemNgauNhien_Click(object sender, EventArgs e)
+        {
+            Session? session = randomSession();
+            if (session is Session sessValue)
+            {
+                table.Rows.Add(null, sessValue.roomId, sessValue.movieId, sessValue.date, sessValue.time);
+            } else
+            {
+                MessageBox.Show("Hệ thống không thể xếp suất chiếu ngẫu nhiên.", "Thất bại", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }

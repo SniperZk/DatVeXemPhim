@@ -28,7 +28,7 @@ namespace DatVeXemPhim.Utils
             adapter.Fill(table);
         }
 
-        public void update(DataTable table)
+        public int update(DataTable table)
         {
             using SqlConnection conn = new SqlConnection(ConnectionString);
             using SqlDataAdapter adapter = new SqlDataAdapter(SelectQuery, conn);
@@ -37,9 +37,10 @@ namespace DatVeXemPhim.Utils
             builder.GetDeleteCommand();
             builder.GetInsertCommand();
 
-            adapter.Update(table);
+            int affected = adapter.Update(table);
             table.Clear();
             adapter.Fill(table);
+            return affected;
         }
 
         public int countUsageInTable(string id, string tableName, string tableCol)

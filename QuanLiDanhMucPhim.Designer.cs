@@ -304,7 +304,7 @@
             btnNgauNhien.Name = "btnNgauNhien";
             btnNgauNhien.Size = new System.Drawing.Size(135, 32);
             btnNgauNhien.TabIndex = 11;
-            btnNgauNhien.Text = "Nhập ngẫu nhiên";
+            btnNgauNhien.Text = "Điền ngẫu nhiên";
             btnNgauNhien.UseVisualStyleBackColor = true;
             btnNgauNhien.Click += btnNgauNhien_Click;
             // 
