@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -72,9 +75,68 @@ namespace DatVeXemPhim.Utils
         public static string displayStringFromTableId(DataTable dt, object? id, string idColumn, string nameColumn)
         {
             string idStr = (id != null) ? (string)id : "";
-            using var iterator = (from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row).GetEnumerator();
-            iterator.MoveNext();
-            return $"[{id}] {(string)iterator.Current[nameColumn]}";
+            DataRow? dataRow;
+            if (dt.PrimaryKey.Count() > 0)
+            {
+                dataRow = dt.Rows.Find(idStr);
+            } else
+            {
+                using var iterator = (from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row).GetEnumerator();
+                iterator.MoveNext();
+                dataRow = iterator.Current;
+            }
+            if (dataRow != null)
+            {
+                return $"{id} | {dataRow[nameColumn]}";
+            } else
+            {
+                return "";
+            }
+        }
+
+        public static void updateCellFromTableId(DataTable dt, object? id, string idColumn, string nameColumn, DataGridView dataView, int rowIndex)
+        {
+            string idStr = (id != null) ? (string)id : "";
+            DataRow? dataRow;
+            if (dt.PrimaryKey.Count() > 0)
+            {
+                dataRow = dt.Rows.Find(idStr);
+            }
+            else
+            {
+                using var iterator = (from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row).GetEnumerator();
+                iterator.MoveNext();
+                dataRow = iterator.Current;
+            }
+            if (dataRow != null)
+            {
+                dataView.Rows[rowIndex].Cells[nameColumn].Value = dataRow[nameColumn];
+            }
+        }
+
+        public static DataGridViewColumn addFakeColumnToView(DataGridView dataView, string name, string title, string displayAfter)
+        {
+            DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
+            dataView.Columns.Add(column);
+            column.Name = name;
+            column.HeaderText = title;
+            int index = dataView.Columns[displayAfter].DisplayIndex;
+
+            DataGridViewColumn? nextColumn = null;
+            foreach (DataGridViewColumn col in dataView.Columns)
+            {
+                if (col.DisplayIndex > index)
+                {
+                    nextColumn = col;
+                    break;
+                }
+            }
+            if (nextColumn != null)
+            {
+                column.DisplayIndex = nextColumn.DisplayIndex;
+            }
+
+            return column;
         }
 
         public static void bindGroupBoxToTable(GroupBox groupBox, DataTable dt, string template)
@@ -94,6 +156,84 @@ namespace DatVeXemPhim.Utils
             typeof(DataGridView).InvokeMember("DoubleBuffered",
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
                 null, view,[true]);
+        }
+    }
+
+    public class DataGridViewAutoUpdateOthersCell : DataGridViewTextBoxCell
+    {
+        public struct Binding
+        {
+            public string DisplayColumnName = "";
+            public required string ColumnName;
+
+            public Binding()
+            {
+            }
+        }
+
+        public required DataTable Table;
+        public required string IdColumnName;
+        public List<Binding> Bindings = [];
+
+        public DataGridViewAutoUpdateOthersCell() {
+        }
+
+        [SetsRequiredMembers]
+        public DataGridViewAutoUpdateOthersCell(DataTable dataTable, string idColumnName)
+        {
+            Table = dataTable;
+            IdColumnName = idColumnName;
+        }
+
+        public override object Clone()
+        {
+            var cell = (DataGridViewAutoUpdateOthersCell)base.Clone();
+            cell.Table = Table;
+            cell.IdColumnName = IdColumnName;
+            cell.Bindings = Bindings;
+            return cell;
+        }
+
+        public void AddBinding(string columnName, string displayColName = "")
+        {
+            Bindings.Add(new Binding { DisplayColumnName = displayColName, ColumnName = columnName });
+        }
+
+        protected override object GetFormattedValue(object value,
+            int rowIndex,
+            ref DataGridViewCellStyle cellStyle,
+            TypeConverter valueTypeConverter,
+            TypeConverter formattedValueTypeConverter,
+            DataGridViewDataErrorContexts context)
+        {
+            object formattedValue = base.GetFormattedValue(value, rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
+
+            if (DataGridView == null || value == null || value == DBNull.Value)
+            {
+                return formattedValue;
+            }
+
+            string idStr = (value != null) ? (string)value : "";
+            DataRow? dataRow;
+            if (Table.PrimaryKey.Count() > 0)
+            {
+                dataRow = Table.Rows.Find(idStr);
+            }
+            else
+            {
+                using var iterator = (from DataRow row in Table.Rows where row.Field<string>(IdColumnName) == idStr select row).GetEnumerator();
+                iterator.MoveNext();
+                dataRow = iterator.Current;
+            }
+            if (dataRow != null)
+            {
+                foreach (Binding binding in Bindings)
+                {
+                    DataGridView.Rows[rowIndex].Cells[binding.ColumnName].Value = dataRow[binding.ColumnName];
+                }
+            }
+
+            return formattedValue;
         }
     }
 }

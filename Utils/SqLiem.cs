@@ -57,5 +57,31 @@ namespace DatVeXemPhim.Utils
                 }
             }
         }
+
+        public DataTable selectToTable(string query, bool setPrimaryKey = true)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    return selectToTable(cmd, setPrimaryKey);
+                }
+            }
+        }
+
+        public DataTable selectToTable(SqlCommand cmd, bool setPrimaryKey = true)
+        {
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                DataTable table = new DataTable();
+                table.Load(reader);
+                if (setPrimaryKey)
+                {
+                    table.PrimaryKey = [table.Columns[0]];
+                }
+                return table;
+            }
+        }
     }
 }
