@@ -19,7 +19,7 @@ namespace DatVeXemPhim
 
         private void RandomMoviesDialog_Load(object sender, EventArgs e)
         {
-            cbTheLoai.Items.AddRange(new string[] { "(ngẫu nhiên)", "Hành động", "Tâm lý", "Kinh dị", "Lãng mạn", "Kỳ ảo" });
+            cbTheLoai.Items.AddRange( ["(ngẫu nhiên)", ..Constants.CATEGORIES]);
             cbTheLoai.SelectedIndex = 0;
         }
 

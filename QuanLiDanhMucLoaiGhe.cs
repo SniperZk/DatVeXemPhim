@@ -14,7 +14,6 @@ namespace DatVeXemPhim
 {
     public partial class QuanLiDanhMucLoaiGhe : Form
     {
-        private readonly static string connString = "Initial Catalog=CINEMA_PROJECT;Data Source=LAPTOP-P1DI0588\\SQLEXPRESS;TrustServerCertificate=True;Trusted_Connection=True";
         private DataTable table = new DataTable();
         private SqLiem sqliem;
 
@@ -25,12 +24,34 @@ namespace DatVeXemPhim
             sqliem = new SqLiem(@"SELECT
 ID_LOAIGHE AS [Mã loại ghế],
 TENLOAIGHE AS [Tên loại ghế]
-FROM LOAIGHE", connString);
+FROM LOAIGHE", Constants.CONNECTION_STRING);
+        }
+
+        private bool checkNotDuplicated()
+        {
+            var result = from row in table.AsEnumerable()
+                         where row.RowState != DataRowState.Deleted
+                         && row.Field<string>("Tên loại ghế") == txtTen.Text
+                         select row;
+            if (result.Any())
+            {
+                MessageBox.Show("Đã có loại ghế với tên này rồi.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtTen.Focus();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            if (!LinkTing.checkEmptyTextBox(txtTen, "Vui lòng nhập tên loại ghế."))
+            if (!Chung.checkEmptyTextBox(txtTen, "Vui lòng nhập tên loại ghế."))
+            {
+                return;
+            }
+            if (!checkNotDuplicated())
             {
                 return;
             }
@@ -40,7 +61,7 @@ FROM LOAIGHE", connString);
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (!LinkTing.checkEmptyTextBox(txtTen, "Vui lòng nhập loại ghế."))
+            if (!Chung.checkEmptyTextBox(txtTen, "Vui lòng nhập loại ghế."))
             {
                 return;
             }
@@ -48,14 +69,33 @@ FROM LOAIGHE", connString);
             {
                 return;
             }
+            if (!checkNotDuplicated())
+            {
+                return;
+            }
 
-            DataRow row = ((DataRowView)dataView.SelectedRows[0].DataBoundItem).Row;
-            row[1] = txtTen.Text;
+            Chung.changeSelectedViewRow(dataView, NoParam.Value, txtTen.Text);
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            LinkTing.deleteDataGridViewSelectedRows(dataView);
+            using (new WaitGuard(Cursors.WaitCursor, btnXoa))
+            {
+                foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
+                {
+                    var value = selectedRow.Cells[0].Value;
+                    if (value != DBNull.Value)
+                    {
+                        int count;
+                        if ((count = sqliem.countUsageInTable((string)value, "GHE", "ID_LOAIGHE")) > 0)
+                        {
+                            MessageBox.Show($"Không thể xoá loại ghế này vì có {count} ghế thuộc loại này.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            continue;
+                        }
+                    }
+                    ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
+                }
+            }
         }
 
         private void btnRong_Click(object sender, EventArgs e)
@@ -67,7 +107,10 @@ FROM LOAIGHE", connString);
         {
             try
             {
-                sqliem.load(table);
+                using (new WaitGuard(Cursors.WaitCursor, btnTaiLai))
+                {
+                    sqliem.load(table);
+                }
             }
             catch (Exception ex)
             {
@@ -79,7 +122,10 @@ FROM LOAIGHE", connString);
         {
             try
             {
-                sqliem.update(table);
+                using (new WaitGuard(Cursors.WaitCursor, btnLuu))
+                {
+                    sqliem.update(table);
+                }
             }
             catch (Exception ex)
             {
@@ -99,21 +145,24 @@ FROM LOAIGHE", connString);
 
         private void QuanLiDanhMucLoaiGhe_Load(object sender, EventArgs e)
         {
-            LinkTing.bindGroupBoxToTable(gbLoaiGhe, table, "Danh mục loại ghế ({0})");
-            LinkTing.setDoubleBuffered(dataView);
-
-            try
+            using (new WaitGuard(Cursors.AppStarting))
             {
-                sqliem.load(table);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
-            }
+                Chung.bindGroupBoxToTable(gbLoaiGhe, table, "Danh mục loại ghế ({0})");
+                Chung.setDoubleBuffered(dataView);
 
-            dataView.DataSource = table;
+                try
+                {
+                    sqliem.load(table);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Close();
+                    return;
+                }
 
+                dataView.DataSource = table;
+            }
         }
 
         private void dataView_SelectionChanged(object sender, EventArgs e)

@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using DatVeXemPhim.Utils;
 
 namespace DatVeXemPhim
 {
     public partial class QuanLiDanhMucPhong : Form
     {
-        private readonly static string connString = "Initial Catalog=CINEMA_PROJECT;Data Source=LAPTOP-P1DI0588\\SQLEXPRESS;TrustServerCertificate=True;Trusted_Connection=True";
         private DataTable table = new DataTable();
         private SqLiem sqliem;
 
@@ -24,7 +24,7 @@ namespace DatVeXemPhim
             sqliem = new SqLiem(@"SELECT
 ID_PHONGCHIEU AS [Mã phòng],
 TENPHONG AS [Tên phòng]
-FROM PHONGCHIEU", connString);
+FROM PHONGCHIEU", Constants.CONNECTION_STRING);
         }
 
         private void btnRong_Click(object sender, EventArgs e)
@@ -32,9 +32,30 @@ FROM PHONGCHIEU", connString);
             txtTen.Clear();
         }
 
+        private bool checkNotDuplicated()
+        {
+            var result = from row in table.AsEnumerable()
+                         where row.RowState != DataRowState.Deleted
+                         && row.Field<string>("Tên phòng") == txtTen.Text
+                         select row;
+            if (result.Any())
+            {
+                MessageBox.Show("Đã có phòng với tên này rồi.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtTen.Focus();
+                return false;
+            } else
+            {
+                return true;
+            }
+        }
+
         private void btnThem_Click(object sender, EventArgs e)
         {
-            if (!LinkTing.checkEmptyTextBox(txtTen, "Vui lòng nhập tên phòng."))
+            if (!Chung.checkEmptyTextBox(txtTen, "Vui lòng nhập tên phòng."))
+            {
+                return;
+            }
+            if (!checkNotDuplicated())
             {
                 return;
             }
@@ -44,7 +65,11 @@ FROM PHONGCHIEU", connString);
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (!LinkTing.checkEmptyTextBox(txtTen, "Vui lòng nhập tên phòng."))
+            if (!Chung.checkEmptyTextBox(txtTen, "Vui lòng nhập tên phòng."))
+            {
+                return;
+            }
+            if (!checkNotDuplicated())
             {
                 return;
             }
@@ -53,25 +78,27 @@ FROM PHONGCHIEU", connString);
                 return;
             }
 
-            DataRow row = ((DataRowView)dataView.SelectedRows[0].DataBoundItem).Row;
-            row[1] = txtTen.Text;
+            Chung.changeSelectedViewRow(dataView, NoParam.Value, txtTen.Text);
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
+            using (new WaitGuard(Cursors.WaitCursor, btnXoa))
             {
-                var value = selectedRow.Cells[0].Value;
-                if (value != DBNull.Value)
+                foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
                 {
-                    int count;
-                    if ((count = sqliem.countUsageInTable((string)value, "SUATCHIEU", "ID_PHONGCHIEU")) > 0)
+                    var value = selectedRow.Cells[0].Value;
+                    if (value != DBNull.Value)
                     {
-                        MessageBox.Show($"Không thể xoá phim này vì có {count} suất chiếu ở phòng này.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        continue;
+                        int count;
+                        if ((count = sqliem.countUsageInTable((string)value, "SUATCHIEU", "ID_PHONGCHIEU")) > 0)
+                        {
+                            MessageBox.Show($"Không thể xoá phim này vì có {count} suất chiếu ở phòng này.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            continue;
+                        }
                     }
+                    ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
                 }
-                ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
             }
         }
 
@@ -89,7 +116,10 @@ FROM PHONGCHIEU", connString);
         {
             try
             {
-                sqliem.load(table);
+                using (new WaitGuard(Cursors.WaitCursor, btnTaiLai))
+                {
+                    sqliem.load(table);
+                }
             }
             catch (Exception ex)
             {
@@ -101,7 +131,10 @@ FROM PHONGCHIEU", connString);
         {
             try
             {
-                sqliem.update(table);
+                using (new WaitGuard(Cursors.WaitCursor, btnLuu))
+                {
+                    sqliem.update(table);
+                }
             }
             catch (Exception ex)
             {
@@ -111,20 +144,24 @@ FROM PHONGCHIEU", connString);
 
         private void QuanLiDanhMucPhong_Load(object sender, EventArgs e)
         {
-            LinkTing.bindGroupBoxToTable(gbPhong, table, "Danh mục phòng ({0})");
-            LinkTing.setDoubleBuffered(dataView);
-
-            try
+            using (new WaitGuard(Cursors.AppStarting))
             {
-                sqliem.load(table);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
-            }
+                Chung.bindGroupBoxToTable(gbPhong, table, "Danh mục phòng ({0})");
+                Chung.setDoubleBuffered(dataView);
 
-            dataView.DataSource = table;
+                try
+                {
+                    sqliem.load(table);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Close();
+                    return;
+                }
+
+                dataView.DataSource = table;
+            }
         }
 
         private void dataView_SelectionChanged(object sender, EventArgs e)

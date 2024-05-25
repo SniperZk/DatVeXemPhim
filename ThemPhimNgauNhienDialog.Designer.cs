@@ -93,6 +93,9 @@
             Controls.Add(cbTheLoai);
             Controls.Add(label2);
             Controls.Add(label1);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "ThemPhimNgauNhienDialog";
             SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             Text = "Tuỳ chọn thêm";

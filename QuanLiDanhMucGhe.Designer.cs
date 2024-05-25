@@ -218,7 +218,7 @@
             label1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 254);
-            label1.Location = new System.Drawing.Point(217, 19);
+            label1.Location = new System.Drawing.Point(275, 21);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(288, 29);
             label1.TabIndex = 20;
@@ -226,6 +226,7 @@
             // 
             // gbGhe
             // 
+            gbGhe.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             gbGhe.Controls.Add(dataView);
             gbGhe.Location = new System.Drawing.Point(16, 211);
             gbGhe.Name = "gbGhe";
@@ -259,7 +260,7 @@
             dataView.RowTemplate.Height = 24;
             dataView.RowTemplate.ReadOnly = true;
             dataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dataView.Size = new System.Drawing.Size(814, 312);
+            dataView.Size = new System.Drawing.Size(807, 312);
             dataView.TabIndex = 20;
             dataView.CellDoubleClick += dataView_CellDoubleClick;
             dataView.CellFormatting += dataView_CellFormatting;
@@ -268,7 +269,8 @@
             // 
             // btnLuu
             // 
-            btnLuu.Location = new System.Drawing.Point(767, 564);
+            btnLuu.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnLuu.Location = new System.Drawing.Point(767, 565);
             btnLuu.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnLuu.Name = "btnLuu";
             btnLuu.Size = new System.Drawing.Size(75, 32);
@@ -279,7 +281,8 @@
             // 
             // btnTaiLai
             // 
-            btnTaiLai.Location = new System.Drawing.Point(686, 564);
+            btnTaiLai.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnTaiLai.Location = new System.Drawing.Point(686, 565);
             btnTaiLai.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             btnTaiLai.Name = "btnTaiLai";
             btnTaiLai.Size = new System.Drawing.Size(75, 32);
@@ -310,11 +313,12 @@
             // 
             // flowLayoutPanel3
             // 
+            flowLayoutPanel3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             flowLayoutPanel3.Controls.Add(btnRong);
             flowLayoutPanel3.Controls.Add(btnHangLoat);
-            flowLayoutPanel3.Location = new System.Drawing.Point(656, 85);
+            flowLayoutPanel3.Location = new System.Drawing.Point(656, 81);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new System.Drawing.Size(186, 79);
+            flowLayoutPanel3.Size = new System.Drawing.Size(186, 83);
             flowLayoutPanel3.TabIndex = 31;
             // 
             // QuanLiDanhMucGhe

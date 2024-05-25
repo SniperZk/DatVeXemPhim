@@ -17,7 +17,6 @@ namespace DatVeXemPhim
 {
     public partial class QuanLiDanhMucPhim : Form
     {
-        private readonly static string connString = "Initial Catalog=CINEMA_PROJECT;Data Source=LAPTOP-P1DI0588\\SQLEXPRESS;TrustServerCertificate=True;Trusted_Connection=True";
         private DataTable table = new DataTable();
         private SqLiem sqliem;
         private Faker faker = new Faker();
@@ -34,30 +33,34 @@ namespace DatVeXemPhim
     NGAYKHOICHIEU AS [Ngày khởi chiếu],
     NGAYCHIEUCUOI AS [Ngày chiếu cuối],
     DOTUOI AS [Độ tuổi]
-FROM PHIM", connString);
+FROM PHIM", Constants.CONNECTION_STRING);
         }
 
         private void QuanLiDanhMucPhim_Load(object sender, EventArgs e)
         {
-            cbTheLoai.Items.AddRange(new string[] { "Hành động", "Tâm lý", "Kinh dị", "Lãng mạn", "Kỳ ảo" });
-            cbTheLoai.SelectedIndex = 0;
-            cbDoTuoi.Items.AddRange(new string[] { "P", "K", "T13", "T16", "T18" });
-            cbDoTuoi.SelectedIndex = 0;
-
-            LinkTing.bindGroupBoxToTable(gbPhim, table, "Danh mục phim ({0})");
-            LinkTing.setDoubleBuffered(dataView);
-            
-            try
+            using (new WaitGuard(Cursors.AppStarting))
             {
-                sqliem.load(table);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
-            }
+                cbTheLoai.Items.AddRange(Constants.CATEGORIES);
+                cbTheLoai.SelectedIndex = 0;
+                cbDoTuoi.Items.AddRange(Constants.RATINGS);
+                cbDoTuoi.SelectedIndex = 0;
 
-            dataView.DataSource = table;
+                Chung.bindGroupBoxToTable(gbPhim, table, "Danh mục phim ({0})");
+                Chung.setDoubleBuffered(dataView);
+
+                try
+                {
+                    sqliem.load(table);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Close();
+                    return;
+                }
+
+                dataView.DataSource = table;
+            }
         }
 
         private void btnRong_Click(object sender, EventArgs e)
@@ -67,23 +70,46 @@ FROM PHIM", connString);
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            if (!LinkTing.checkEmptyTextBox(txtTieuDe, "Vui lòng nhập tiêu đề phim."))
-            {
-                return;
-            }
-            if (!LinkTing.checkDateTimePickerPair(dtKhoiChieu, dtChieuCuoi, "Ngày khởi chiếu phải sớm hơn ngày chiếu cuối."))
+            if (!checkValidInputs())
             {
                 return;
             }
 
-            table.Rows.Add(null, txtTieuDe.Text, cbTheLoai.Text, LinkTing.toTime(dtThoiLuong.Value), dtKhoiChieu.Value.Date, dtChieuCuoi.Value.Date, cbDoTuoi.Text);
+            table.Rows.Add(null, txtTieuDe.Text, cbTheLoai.Text,
+                Chung.toTime(dtThoiLuong.Value), dtKhoiChieu.Value.Date,
+                dtChieuCuoi.Value.Date, cbDoTuoi.Text);
+        }
+
+        private bool checkValidInputs()
+        {
+            if (!Chung.checkEmptyTextBox(txtTieuDe, "Vui lòng nhập tiêu đề phim."))
+            {
+                return false;
+            }
+            if (!Chung.checkEmptyComboBox(cbTheLoai, "Vui lòng chọn thể loại phim."))
+            {
+                return false;
+            }
+            if (!Chung.checkEmptyComboBox(cbDoTuoi, "Vui lòng chọn độ tuổi."))
+            {
+                return false;
+            }
+            if (!Chung.checkDateTimePickerPair(dtKhoiChieu, dtChieuCuoi, "Ngày khởi chiếu phải sớm hơn ngày chiếu cuối."))
+            {
+                return false;
+            }
+            return true;
         }
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
             try
             {
-                sqliem.update(table);
+                using (new WaitGuard(Cursors.WaitCursor, btnLuu))
+                {
+                    int affected = sqliem.update(table);
+                    MessageBox.Show($"Cập nhật thành công, đã thao tác lên {affected} dòng dữ liệu.", "Cập nhật thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
             catch (Exception ex)
             {
@@ -95,7 +121,10 @@ FROM PHIM", connString);
         {
             try
             {
-                sqliem.load(table);
+                using (new WaitGuard(Cursors.WaitCursor, btnTaiLai))
+                {
+                    sqliem.load(table);
+                }
             }
             catch (Exception ex)
             {
@@ -113,7 +142,7 @@ FROM PHIM", connString);
             int colIndex = 1;
             txtTieuDe.Text = (string)row.Cells[colIndex++].Value;
             cbTheLoai.Text = (string)row.Cells[colIndex++].Value;
-            dtThoiLuong.Value = LinkTing.toDate((TimeSpan)row.Cells[colIndex++].Value);
+            dtThoiLuong.Value = Chung.toDate((TimeSpan)row.Cells[colIndex++].Value);
             dtKhoiChieu.Value = (DateTime)row.Cells[colIndex++].Value;
             dtChieuCuoi.Value = (DateTime)row.Cells[colIndex++].Value;
             cbDoTuoi.Text = (string)row.Cells[colIndex++].Value;
@@ -121,7 +150,7 @@ FROM PHIM", connString);
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (!LinkTing.checkEmptyTextBox(txtTieuDe, "Vui lòng nhập tiêu đề phim."))
+            if (!checkValidInputs())
             {
                 return;
             }
@@ -130,31 +159,29 @@ FROM PHIM", connString);
                 return;
             }
 
-            DataRow row = ((DataRowView)dataView.SelectedRows[0].DataBoundItem).Row;
-            int colIndex = 1;
-            row[colIndex++] = txtTieuDe.Text;
-            row[colIndex++] = cbTheLoai.Text;
-            row[colIndex++] = LinkTing.toTime(dtThoiLuong.Value);
-            row[colIndex++] = dtKhoiChieu.Value;
-            row[colIndex++] = dtChieuCuoi.Value;
-            row[colIndex++] = cbDoTuoi.Text;
+            Chung.changeSelectedViewRow(dataView, NoParam.Value, txtTieuDe.Text,
+                cbTheLoai.Text, Chung.toTime(dtThoiLuong.Value), dtKhoiChieu.Value,
+                dtChieuCuoi.Value, cbDoTuoi.Text);
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
+            using (new WaitGuard(Cursors.WaitCursor, btnXoa))
             {
-                var value = selectedRow.Cells[0].Value;
-                if (value != DBNull.Value)
+                foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
                 {
-                    int count;
-                    if ((count = sqliem.countUsageInTable((string)value, "SUATCHIEU", "ID_PHIM")) > 0)
+                    var value = selectedRow.Cells[0].Value;
+                    if (value != DBNull.Value)
                     {
-                        MessageBox.Show($"Không thể xoá phim này vì đang có {count} suất chiếu phim này.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        continue;
+                        int count;
+                        if ((count = sqliem.countUsageInTable((string)value, "SUATCHIEU", "ID_PHIM")) > 0)
+                        {
+                            MessageBox.Show($"Không thể xoá phim này vì đang có {count} suất chiếu phim này.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            continue;
+                        }
                     }
-                }
                 ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
+                }
             }
         }
 
@@ -179,17 +206,22 @@ FROM PHIM", connString);
             DialogResult res = dialog.ShowDialog();
             if (res == DialogResult.OK)
             {
-                int rows = dialog.numberOfRows();
-                string category = dialog.category();
-                bool isRandomCat = string.IsNullOrEmpty(category);
-                for (int i = 0; i < rows; i++)
+                using (new WaitGuard(Cursors.WaitCursor, btnThemNgauNhien))
                 {
-                    if (isRandomCat)
+                    int rows = dialog.numberOfRows();
+                    string category = dialog.category();
+                    bool isRandomCat = string.IsNullOrEmpty(category);
+                    table.BeginLoadData();
+                    for (int i = 0; i < rows; i++)
                     {
-                        category = faker.randomCategory();
+                        if (isRandomCat)
+                        {
+                            category = faker.randomCategory();
+                        }
+                        DateTime khoiChieu = faker.randomDate();
+                        table.Rows.Add(null, faker.randomTitle(category), category, faker.randomDuration(), khoiChieu.Date, khoiChieu.AddDays(faker.randInt(31)).Date, faker.randomRating());
                     }
-                    DateTime khoiChieu = faker.randomDate();
-                    table.Rows.Add(null, faker.randomTitle(category), category, faker.randomDuration(), khoiChieu.Date, khoiChieu.AddDays(faker.randInt(31)).Date, faker.randomRating());
+                    table.EndLoadData();
                 }
             }
         }

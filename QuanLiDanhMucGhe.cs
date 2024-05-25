@@ -35,32 +35,21 @@ TRANGTHAI AS [Trạng thái]
 FROM GHE", connString);
         }
 
-        private bool checkDuplicateInfo()
+        private void btnThem_Click(object sender, EventArgs e)
         {
+            if (!Chung.checkEmptyTextBox(txtViTri, "Vui lòng nhập vị trí ghế."))
+            {
+                return;
+            }
             var result = from row in table.AsEnumerable()
-                         where row.Field<string>("Mã phòng") == cbPhong.SelectedValue as string
+                         where row.RowState != DataRowState.Deleted
+                         && row.Field<string>("Mã phòng") == cbPhong.SelectedValue as string
                          && row.Field<string>("Mã loại ghế") == cbLoaiGhe.SelectedValue as string
                          && row.Field<string>("Vị trí") == txtViTri.Text
                          select row;
             if (result.Any())
             {
                 MessageBox.Show("Đã có ghế trùng với loại ghế, phòng chiếu và vị trí này.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        private void btnThem_Click(object sender, EventArgs e)
-        {
-            if (!LinkTing.checkEmptyTextBox(txtViTri, "Vui lòng nhập vị trí ghế."))
-            {
-                return;
-            }
-            if (!checkDuplicateInfo())
-            {
                 return;
             }
 
@@ -73,21 +62,25 @@ FROM GHE", connString);
             {
                 return;
             }
-            if (!LinkTing.checkEmptyTextBox(txtViTri, "Vui lòng nhập vị trí ghế."))
+            if (!Chung.checkEmptyTextBox(txtViTri, "Vui lòng nhập vị trí ghế."))
             {
                 return;
             }
-            if (!checkDuplicateInfo())
+            DataRow selected = ((DataRowView)dataView.SelectedRows[0].DataBoundItem).Row;
+            var result = from row in table.AsEnumerable()
+                         where row.RowState != DataRowState.Deleted
+                         && row.Field<string>("Mã phòng") == cbPhong.SelectedValue as string
+                         && row.Field<string>("Mã loại ghế") == cbLoaiGhe.SelectedValue as string
+                         && row.Field<string>("Vị trí") == txtViTri.Text
+                         && (row.Field<string>("Trạng thái") == "True") == checkTrangThai.Checked
+                         select row;
+            if (result.Any() && Chung.enumerateOnce(result) != selected)
             {
+                MessageBox.Show("Đã có ghế trùng với loại ghế, phòng chiếu và vị trí này.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            DataRow row = ((DataRowView)dataView.SelectedRows[0].DataBoundItem).Row;
-            int colIndex = 1;
-            row[colIndex++] = cbLoaiGhe.SelectedValue;
-            row[colIndex++] = cbPhong.SelectedValue;
-            row[colIndex++] = txtViTri.Text;
-            row[colIndex++] = checkTrangThai.Checked;
+            Chung.changeDataRow(selected, NoParam.Value, cbLoaiGhe.SelectedValue, cbPhong.SelectedValue, txtViTri.Text, checkTrangThai.Checked);
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
@@ -129,42 +122,41 @@ FROM GHE", connString);
 
         private void QuanLiDanhMucGhe_Load(object sender, EventArgs e)
         {
-            LinkTing.setDoubleBuffered(dataView);
-            LinkTing.bindGroupBoxToTable(gbGhe, table, "Danh mục ghế ({0})");
-
-            try
+            using (new WaitGuard(Cursors.AppStarting))
             {
-                sqliem.load(table);
-                loadOtherTables();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
-                return;
-            }
+                Chung.setDoubleBuffered(dataView);
+                Chung.bindGroupBoxToTable(gbGhe, table, "Danh mục ghế ({0})");
 
-            dataView.DataSource = table;
+                try
+                {
+                    sqliem.load(table);
+                    loadOtherTables();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Close();
+                    return;
+                }
+
+                dataView.DataSource = table;
+            }
         }
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
             try
             {
-                btnLuu.Enabled = false;
-                Cursor = Cursors.WaitCursor;
-                int affected = sqliem.update(table);
-                loadOtherTables();
-                MessageBox.Show($"Cập nhật thành công, đã thao tác lên {affected} dòng dữ liệu.", "Cập nhật thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                using (new WaitGuard(Cursors.WaitCursor, btnLuu))
+                {
+                    int affected = sqliem.update(table);
+                    loadOtherTables();
+                    MessageBox.Show($"Cập nhật thành công, đã thao tác lên {affected} dòng dữ liệu.", "Cập nhật thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                Cursor = Cursors.Default;
-                btnLuu.Enabled = true;
             }
         }
 
@@ -172,8 +164,11 @@ FROM GHE", connString);
         {
             try
             {
-                sqliem.load(table);
-                loadOtherTables();
+                using (new WaitGuard(Cursors.WaitCursor, btnTaiLai))
+                {
+                    sqliem.load(table);
+                    loadOtherTables();
+                }
             }
             catch (Exception ex)
             {
@@ -209,28 +204,31 @@ FROM GHE", connString);
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                table.BeginLoadData();
-                if (dialog.deleteBeforeInserting())
+                using (new WaitGuard(Cursors.WaitCursor, btnHangLoat))
                 {
-                    foreach (DataRow row in table.Rows)
+                    table.BeginLoadData();
+                    if (dialog.deleteBeforeInserting())
                     {
-                        row.Delete();
+                        foreach (DataRow row in table.Rows)
+                        {
+                            row.Delete();
+                        }
                     }
-                }
-                DataTable tempTable = table.Clone();
-                if (!string.IsNullOrEmpty(dialog.room()))
-                {
-                    fillSeatsInRoom(tempTable, dialog.room(), dialog.seatType());
-                }
-                else
-                {
-                    foreach (DataRow room in roomTable.Rows)
+                    DataTable tempTable = table.Clone();
+                    if (!string.IsNullOrEmpty(dialog.room()))
                     {
-                        fillSeatsInRoom(tempTable, (string)room["ID_PHONGCHIEU"], dialog.seatType());
+                        fillSeatsInRoom(tempTable, dialog.room(), dialog.seatType());
                     }
+                    else
+                    {
+                        foreach (DataRow room in roomTable.Rows)
+                        {
+                            fillSeatsInRoom(tempTable, (string)room["ID_PHONGCHIEU"], dialog.seatType());
+                        }
+                    }
+                    table.Merge(tempTable, false);
+                    table.EndLoadData();
                 }
-                table.Merge(tempTable, false);
-                table.EndLoadData();
             }
         }
 
@@ -275,8 +273,8 @@ FROM GHE", connString);
         {
             if(dataView.Columns.Count == 5)
             {
-                DataGridViewColumn column = LinkTing.addFakeColumnToView(dataView, "TENLOAIGHE", "Tên loại ghế", "Mã loại ghế");
-                column = LinkTing.addFakeColumnToView(dataView, "TENPHONG", "Tên phòng", "Mã phòng");
+                DataGridViewColumn column = Chung.addFakeColumnToView(dataView, "TENLOAIGHE", "Tên loại ghế", "Mã loại ghế");
+                column = Chung.addFakeColumnToView(dataView, "TENPHONG", "Tên phòng", "Mã phòng");
 
                 var cellTemplate = new DataGridViewAutoUpdateOthersCell() { IdColumnName = "Mã loại ghế", Table = seatTypeTable };
                 cellTemplate.AddBinding("TENLOAIGHE");

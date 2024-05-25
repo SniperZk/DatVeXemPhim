@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,7 +10,12 @@ using System.Windows.Forms;
 
 namespace DatVeXemPhim.Utils
 {
-    public class LinkTing
+    public class NoParam
+    {
+        public static readonly NoParam Value = new NoParam();
+    }
+
+    public static class Chung
     {
         public static bool checkEmptyTextBox(TextBox txt, string msg)
         {
@@ -81,9 +84,7 @@ namespace DatVeXemPhim.Utils
                 dataRow = dt.Rows.Find(idStr);
             } else
             {
-                using var iterator = (from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row).GetEnumerator();
-                iterator.MoveNext();
-                dataRow = iterator.Current;
+                dataRow = Chung.enumerateOnce(from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row);
             }
             if (dataRow != null)
             {
@@ -104,9 +105,7 @@ namespace DatVeXemPhim.Utils
             }
             else
             {
-                using var iterator = (from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row).GetEnumerator();
-                iterator.MoveNext();
-                dataRow = iterator.Current;
+                dataRow = Chung.enumerateOnce(from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row);
             }
             if (dataRow != null)
             {
@@ -157,83 +156,59 @@ namespace DatVeXemPhim.Utils
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
                 null, view,[true]);
         }
+
+        public static void changeDataRow(DataRow row, params object?[] values)
+        {
+            int i = 0;
+            foreach (var value in values)
+            {
+                if (value is not NoParam)
+                {
+                    row[i] = value;
+                }
+                ++i;
+            }
+        }
+        public static void changeSelectedViewRow(DataGridView view, params object?[] values)
+        {
+            DataRow row = ((DataRowView)view.SelectedRows[0].DataBoundItem).Row;
+            changeDataRow(row, values);
+        }
+
+        public static T enumerateOnce<T>(IEnumerable<T> enumerable) => enumerateNext(enumerable.GetEnumerator());
+        public static T enumerateNext<T>(IEnumerator<T> iterator)
+        {
+            iterator.MoveNext();
+            return iterator.Current;
+        }
     }
 
-    public class DataGridViewAutoUpdateOthersCell : DataGridViewTextBoxCell
+
+
+    public class WaitGuard : IDisposable
     {
-        public struct Binding
-        {
-            public string DisplayColumnName = "";
-            public required string ColumnName;
+        private Button? Button = null;
 
-            public Binding()
+        public WaitGuard(Cursor cursor, Button? button = null)
+        {
+            Cursor.Current = cursor;
+            Application.UseWaitCursor = true;
+            Button = button;
+            if (Button != null)
             {
+                Button.Enabled = false;
             }
         }
 
-        public required DataTable Table;
-        public required string IdColumnName;
-        public List<Binding> Bindings = [];
-
-        public DataGridViewAutoUpdateOthersCell() {
-        }
-
-        [SetsRequiredMembers]
-        public DataGridViewAutoUpdateOthersCell(DataTable dataTable, string idColumnName)
+        public void Dispose()
         {
-            Table = dataTable;
-            IdColumnName = idColumnName;
-        }
-
-        public override object Clone()
-        {
-            var cell = (DataGridViewAutoUpdateOthersCell)base.Clone();
-            cell.Table = Table;
-            cell.IdColumnName = IdColumnName;
-            cell.Bindings = Bindings;
-            return cell;
-        }
-
-        public void AddBinding(string columnName, string displayColName = "")
-        {
-            Bindings.Add(new Binding { DisplayColumnName = displayColName, ColumnName = columnName });
-        }
-
-        protected override object GetFormattedValue(object value,
-            int rowIndex,
-            ref DataGridViewCellStyle cellStyle,
-            TypeConverter valueTypeConverter,
-            TypeConverter formattedValueTypeConverter,
-            DataGridViewDataErrorContexts context)
-        {
-            object formattedValue = base.GetFormattedValue(value, rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
-
-            if (DataGridView == null || value == null || value == DBNull.Value)
+            Cursor.Current = Cursors.Default;
+            Application.UseWaitCursor = false;
+            if (Button != null)
             {
-                return formattedValue;
+                Application.DoEvents();
+                Button.Enabled = true;
             }
-
-            string idStr = (value != null) ? (string)value : "";
-            DataRow? dataRow;
-            if (Table.PrimaryKey.Count() > 0)
-            {
-                dataRow = Table.Rows.Find(idStr);
-            }
-            else
-            {
-                using var iterator = (from DataRow row in Table.Rows where row.Field<string>(IdColumnName) == idStr select row).GetEnumerator();
-                iterator.MoveNext();
-                dataRow = iterator.Current;
-            }
-            if (dataRow != null)
-            {
-                foreach (Binding binding in Bindings)
-                {
-                    DataGridView.Rows[rowIndex].Cells[binding.ColumnName].Value = dataRow[binding.ColumnName];
-                }
-            }
-
-            return formattedValue;
         }
     }
 }

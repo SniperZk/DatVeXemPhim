@@ -50,15 +50,15 @@
             // 
             cbPhong.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cbPhong.FormattingEnabled = true;
-            cbPhong.Location = new System.Drawing.Point(116, 12);
+            cbPhong.Location = new System.Drawing.Point(80, 12);
             cbPhong.Name = "cbPhong";
-            cbPhong.Size = new System.Drawing.Size(151, 28);
+            cbPhong.Size = new System.Drawing.Size(187, 28);
             cbPhong.TabIndex = 7;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(59, 15);
+            label2.Location = new System.Drawing.Point(23, 15);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(51, 20);
             label2.TabIndex = 4;
@@ -67,7 +67,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(45, 49);
+            label3.Location = new System.Drawing.Point(9, 49);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(66, 20);
             label3.TabIndex = 4;
@@ -77,9 +77,9 @@
             // 
             cbLoaiGhe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             cbLoaiGhe.FormattingEnabled = true;
-            cbLoaiGhe.Location = new System.Drawing.Point(116, 46);
+            cbLoaiGhe.Location = new System.Drawing.Point(81, 46);
             cbLoaiGhe.Name = "cbLoaiGhe";
-            cbLoaiGhe.Size = new System.Drawing.Size(151, 28);
+            cbLoaiGhe.Size = new System.Drawing.Size(186, 28);
             cbLoaiGhe.TabIndex = 7;
             // 
             // checkXoa
@@ -105,6 +105,9 @@
             Controls.Add(label3);
             Controls.Add(cbPhong);
             Controls.Add(label2);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "ThemGheHangLoatDialog";
             Text = "Thêm ghế hàng loạt";
             Load += ThemGheHangLoatDialog_Load;
