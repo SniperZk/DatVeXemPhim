@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -209,6 +210,17 @@ namespace DatVeXemPhim.Utils
         {
             iterator.MoveNext();
             return iterator.Current;
+        }
+
+        public static string removeDiacritics(string str)
+        {
+            var chars =
+                from c in str.Normalize(NormalizationForm.FormD).ToCharArray()
+                let uc = CharUnicodeInfo.GetUnicodeCategory(c)
+                where uc != UnicodeCategory.NonSpacingMark
+                select c;
+
+            return new string(chars.ToArray()).Normalize(NormalizationForm.FormC);
         }
     }
 

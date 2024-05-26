@@ -43,8 +43,8 @@ namespace DatVeXemPhim.Utils
     {
         private Random rand;
 
-        public static readonly string[] RATINGS = { "P", "K", "T13", "T16", "T18" };
-        public static readonly string[] CATEGORIES = { "Hành động", "Tâm lý", "Kinh dị", "Lãng mạn", "Kỳ ảo" };
+        public static readonly string[] RATINGS = Constants.RATINGS;
+        public static readonly string[] CATEGORIES = Constants.CATEGORIES;
         public static readonly Dictionary<string, WordGroup> CAT_WORDS = initCategoryWords();
         public static readonly WordGroup COMMON_WORDS = new WordGroup
         {
@@ -55,6 +55,13 @@ namespace DatVeXemPhim.Utils
             Verbs2 = ["đi ngủ", "đón Tết"],
             Adjectives = ["bình thường", "tầm thường"],
         };
+        public static readonly string[] FAMILY_NAMES = ["Nguyễn", "Dương", "Phạm", "Cao", "Lại", "Vũ", "Võ", "Trần", "Hoàng", "Huỳnh", "Lê", "Đinh", "Lý", "Bùi", "Đỗ", "Ngô", "Đặng", "Trương", "Hồ", "Ca", "Phan", "Thạch", "Tạ", "Mai", "Giang", "Lã"];
+        public static readonly string[] MALE_MIDDLE_NAMES = ["Văn", "A", "Vĩnh", "Bá", "Khánh", "Xuân", "Minh", "Bảo", "Quang", "Gia", "Công", "Vạn", "Bá"];
+        public static readonly string[] FEMALE_MIDDLE_NAMES = ["Thị", "Ngọc", "Thảo", "Bích", "Kiều", "Như", "Thu", "Trúc", "Vân", "Mỹ", "Hải"];
+        public static readonly string[] MALE_GIVEN_NAMES = ["An", "Anh", "Biên", "Bảo", "Cường", "Danh", "Duy", "Đạt", "Đức", "Hữu", "Khải", "Khá",  "Khâm", "Khang", "Liêm", "Luân", "Hoàng", "Huy", "Hiếu", "Phúc", "Quân", "Sơn", "Thành", "Thắng", "Trường", "Thịnh", "Vương"];
+        public static readonly string[] FEMALE_GIVEN_NAMES = ["An", "Ánh", "Châu", "Đào", "Hồng", "Hiền", "Huyền", "Linh", "Ly", "Lan", "Loan", "Mai", "Ngân", "Ngọc", "Nhi", "Hà", "Oanh", "Phương", "Quyên", "Quỳnh", "Tâm", "Thơ", "Trang", "Thương", "Trang", "Uyên", "Vy", "Yến"];
+        public static readonly string[] EMAIL_DOMAINS = ["gmail.com", "st.vimaru.edu.vn", "yahoo.com", "zing.vn", "go.vn", "proton.me", "hotmail.com"];
+        public static readonly string[] PROVINCE_CITIES = ["An Giang", "Bà Rịa - Vũng Tàu", "Bình Dương", "Bình Phước", "Bình Thuận", "Bình Định", "Bạc Liêu", "Bắc Giang", "Bắc Kạn", "Bắc Ninh", "Bến Tre", "Cao Bằng", "Cà Mau", "Cần Thơ", "Gia Lai", "Hà Giang", "Hà Nam", "Hà Nội", "Hà Tĩnh", "Hòa Bình", "Hưng Yên", "Hải Dương", "Hải Phòng", "Hậu Giang", "Khánh Hòa", "Kiên Giang", "Kon Tum", "Lai Châu", "Long An", "Lào Cai", "Lâm Đồng", "Lạng Sơn", "Nam Định", "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", "Phú Yên", "Quảng Bình", "Quảng Nam", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "TP. Hồ Chí Minh", "Thanh Hóa", "Thái Bình", "Thái Nguyên", "Thừa Thiên Huế", "Tiền Giang", "Trà Vinh", "Tuyên Quang", "Tây Ninh", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái", "Điện Biên", "Đà Nẵng", "Đắk Lắk", "Đắk Nông", "Đồng Nai", "Đồng Tháp"];
 
         public Faker()
         {
@@ -299,6 +306,61 @@ namespace DatVeXemPhim.Utils
         public string randomRating()
         {
             return randChoice(RATINGS);
+        }
+
+        public string randomFullName()
+        {
+            return randomFullName(randInt(2) == 0);
+        }
+        public string randomFullName(bool isBoyName)
+        {
+            List<string> nameParts = new List<string>();
+            string familyName = randChoice(FAMILY_NAMES);
+            nameParts.Add(familyName);
+            string middleName = randChoice(isBoyName ? MALE_MIDDLE_NAMES : FEMALE_MIDDLE_NAMES, familyName);
+            nameParts.Add(middleName);
+            string givenName = randChoice(isBoyName ? MALE_GIVEN_NAMES : FEMALE_GIVEN_NAMES, middleName);
+            nameParts.Add(givenName);
+
+            return string.Join(" ", nameParts);
+        }
+
+        public string randomPronounceableName(int length)
+        {
+            const string vowels = "aeiou";
+            const string consonants = "bcdghklmnpqrstvxy";
+
+            length = length % 2 == 0 ? length : length + 1;
+
+            var name = new char[length];
+
+            for (var i = 0; i < length; i += 2)
+            {
+                name[i] = vowels[randInt(vowels.Length)];
+                name[i + 1] = consonants[randInt(consonants.Length)];
+            }
+
+            return new string(name);
+        }
+
+        public string randomEmail(string? fullName = null)
+        {
+            string result = "";
+            if (fullName != null)
+            {
+                result += Chung.removeDiacritics(fullName.Split(' ')[^1].ToLower());
+            } else
+            {
+                result += randomPronounceableName(6);
+            }
+            result += randInt(10000).ToString();
+            result += '@' + randChoice(EMAIL_DOMAINS);
+            return result;
+        }
+        
+        public string randomProvince()
+        {
+            return randChoice(PROVINCE_CITIES);
         }
     }
 }

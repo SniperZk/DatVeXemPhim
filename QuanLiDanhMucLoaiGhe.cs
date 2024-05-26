@@ -124,7 +124,8 @@ FROM LOAIGHE", Constants.CONNECTION_STRING);
             {
                 using (new WaitGuard(Cursors.WaitCursor, btnLuu))
                 {
-                    sqliem.update(table);
+                    int affected = sqliem.update(table);
+                    MessageBox.Show($"Cập nhật thành công, đã thao tác lên {affected} dòng dữ liệu.", "Cập nhật thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)

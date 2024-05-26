@@ -12,19 +12,37 @@ using DatVeXemPhim.Utils;
 
 namespace DatVeXemPhim
 {
-    public partial class QuanLiDanhMucPhong : Form
+    public partial class QuanLiDanhMucVaiTro : Form
     {
         private DataTable table = new DataTable();
         private SqLiem sqliem;
 
-        public QuanLiDanhMucPhong()
+        public QuanLiDanhMucVaiTro()
         {
             InitializeComponent();
 
             sqliem = new SqLiem(@"SELECT
-ID_PHONGCHIEU AS [Mã phòng],
-TENPHONG AS [Tên phòng]
-FROM PHONGCHIEU", Constants.CONNECTION_STRING);
+ID_VAITRO AS [Mã vai trò],
+TENVAITRO AS [Tên vai trò]
+FROM VAITRO", Constants.CONNECTION_STRING);
+        }
+
+        private bool checkNotDuplicated()
+        {
+            var result = from row in table.AsEnumerable()
+                         where row.RowState != DataRowState.Deleted
+                         && row.Field<string>("Tên vai trò") == txtTen.Text
+                         select row;
+            if (result.Any())
+            {
+                MessageBox.Show("Đã có vai trò với tên này rồi.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtTen.Focus();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private void btnRong_Click(object sender, EventArgs e)
@@ -32,26 +50,9 @@ FROM PHONGCHIEU", Constants.CONNECTION_STRING);
             txtTen.Clear();
         }
 
-        private bool checkNotDuplicated()
-        {
-            var result = from row in table.AsEnumerable()
-                         where row.RowState != DataRowState.Deleted
-                         && row.Field<string>("Tên phòng") == txtTen.Text
-                         select row;
-            if (result.Any())
-            {
-                MessageBox.Show("Đã có phòng với tên này rồi.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtTen.Focus();
-                return false;
-            } else
-            {
-                return true;
-            }
-        }
-
         private void btnThem_Click(object sender, EventArgs e)
         {
-            if (!Chung.checkEmptyTextBox(txtTen, "Vui lòng nhập tên phòng."))
+            if (!Chung.checkEmptyTextBox(txtTen, "Vui lòng nhập tên vai trò."))
             {
                 return;
             }
@@ -65,15 +66,15 @@ FROM PHONGCHIEU", Constants.CONNECTION_STRING);
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (!Chung.checkEmptyTextBox(txtTen, "Vui lòng nhập tên phòng."))
-            {
-                return;
-            }
-            if (!checkNotDuplicated())
+            if (!Chung.checkEmptyTextBox(txtTen, "Vui lòng nhập tên vai trò."))
             {
                 return;
             }
             if (dataView.SelectedRows.Count != 1)
+            {
+                return;
+            }
+            if (!checkNotDuplicated())
             {
                 return;
             }
@@ -91,25 +92,15 @@ FROM PHONGCHIEU", Constants.CONNECTION_STRING);
                     if (value != DBNull.Value)
                     {
                         int count;
-                        if ((count = sqliem.countUsageInTable((string)value, "SUATCHIEU", "ID_PHONGCHIEU")) > 0)
+                        if ((count = sqliem.countUsageInTable((string)value, "TAIKHOAN", "ID_VAITRO")) > 0)
                         {
-                            MessageBox.Show($"Không thể xoá phim này vì có {count} suất chiếu ở phòng này.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show($"Không thể xoá vai trò này vì có {count} tài khoản thuộc loại này.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             continue;
                         }
                     }
                     ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
                 }
             }
-        }
-
-        private void dataView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex == -1 || (dataView.AllowUserToAddRows && (e.RowIndex + 1 == dataView.RowCount)))
-            {
-                return;
-            }
-            DataGridViewRow row = dataView.Rows[e.RowIndex];
-            txtTen.Text = (string)row.Cells[1].Value;
         }
 
         private void btnTaiLai_Click(object sender, EventArgs e)
@@ -143,11 +134,11 @@ FROM PHONGCHIEU", Constants.CONNECTION_STRING);
             }
         }
 
-        private void QuanLiDanhMucPhong_Load(object sender, EventArgs e)
+        private void QuanLiDanhMucVaiTro_Load(object sender, EventArgs e)
         {
             using (new WaitGuard(Cursors.AppStarting))
             {
-                Chung.bindGroupBoxToTable(gbPhong, table, "Danh mục phòng ({0})");
+                Chung.bindGroupBoxToTable(gbVaiTro, table, "Danh mục vai trò ({0})");
                 Chung.setDoubleBuffered(dataView);
 
                 try
@@ -163,6 +154,16 @@ FROM PHONGCHIEU", Constants.CONNECTION_STRING);
 
                 dataView.DataSource = table;
             }
+        }
+
+        private void dataView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1 || (dataView.AllowUserToAddRows && (e.RowIndex + 1 == dataView.RowCount)))
+            {
+                return;
+            }
+            DataGridViewRow row = dataView.Rows[e.RowIndex];
+            txtTen.Text = (string)row.Cells[1].Value;
         }
 
         private void dataView_SelectionChanged(object sender, EventArgs e)
