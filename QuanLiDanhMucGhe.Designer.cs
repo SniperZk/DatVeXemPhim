@@ -38,10 +38,8 @@
             label3 = new System.Windows.Forms.Label();
             cbPhong = new System.Windows.Forms.ComboBox();
             label6 = new System.Windows.Forms.Label();
-            label7 = new System.Windows.Forms.Label();
             cbLoaiGhe = new System.Windows.Forms.ComboBox();
             txtViTri = new System.Windows.Forms.TextBox();
-            checkTrangThai = new System.Windows.Forms.CheckBox();
             label1 = new System.Windows.Forms.Label();
             gbGhe = new System.Windows.Forms.GroupBox();
             dataView = new System.Windows.Forms.DataGridView();
@@ -115,10 +113,8 @@
             tableLayoutPanel1.Controls.Add(label3, 0, 1);
             tableLayoutPanel1.Controls.Add(cbPhong, 1, 1);
             tableLayoutPanel1.Controls.Add(label6, 2, 0);
-            tableLayoutPanel1.Controls.Add(label7, 2, 1);
             tableLayoutPanel1.Controls.Add(cbLoaiGhe, 1, 0);
             tableLayoutPanel1.Controls.Add(txtViTri, 3, 0);
-            tableLayoutPanel1.Controls.Add(checkTrangThai, 3, 1);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             tableLayoutPanel1.Location = new System.Drawing.Point(3, 24);
             tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -166,21 +162,11 @@
             // 
             label6.Anchor = System.Windows.Forms.AnchorStyles.Right;
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(375, 8);
+            label6.Location = new System.Drawing.Point(340, 8);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(40, 20);
             label6.TabIndex = 0;
             label6.Text = "Vị trí";
-            // 
-            // label7
-            // 
-            label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(340, 44);
-            label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(75, 20);
-            label7.TabIndex = 0;
-            label7.Text = "Trạng thái";
             // 
             // cbLoaiGhe
             // 
@@ -196,22 +182,11 @@
             // txtViTri
             // 
             txtViTri.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            txtViTri.Location = new System.Drawing.Point(421, 4);
+            txtViTri.Location = new System.Drawing.Point(386, 4);
             txtViTri.MaxLength = 10;
             txtViTri.Name = "txtViTri";
             txtViTri.Size = new System.Drawing.Size(185, 27);
             txtViTri.TabIndex = 5;
-            // 
-            // checkTrangThai
-            // 
-            checkTrangThai.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            checkTrangThai.AutoSize = true;
-            checkTrangThai.Location = new System.Drawing.Point(421, 42);
-            checkTrangThai.Name = "checkTrangThai";
-            checkTrangThai.Size = new System.Drawing.Size(142, 24);
-            checkTrangThai.TabIndex = 6;
-            checkTrangThai.Text = "Đã được đặt chỗ";
-            checkTrangThai.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -257,13 +232,13 @@
             dataView.ReadOnly = true;
             dataView.RowHeadersVisible = false;
             dataView.RowHeadersWidth = 51;
+            dataView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dataView.RowTemplate.Height = 24;
             dataView.RowTemplate.ReadOnly = true;
             dataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             dataView.Size = new System.Drawing.Size(807, 312);
             dataView.TabIndex = 20;
             dataView.CellDoubleClick += dataView_CellDoubleClick;
-            dataView.CellFormatting += dataView_CellFormatting;
             dataView.ColumnAdded += dataView_ColumnAdded;
             dataView.SelectionChanged += dataView_SelectionChanged;
             // 
@@ -336,7 +311,7 @@
             Controls.Add(groupBox1);
             Controls.Add(label1);
             Name = "QuanLiDanhMucGhe";
-            Text = "QuanLiDanhMucGhe";
+            Text = "Quản lý danh mục ghế";
             Load += QuanLiDanhMucGhe_Load;
             groupBox1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
@@ -366,12 +341,10 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cbPhong;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.DateTimePicker dtNgayChieu;
         private System.Windows.Forms.ComboBox cbLoaiGhe;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtViTri;
-        private System.Windows.Forms.CheckBox checkTrangThai;
         private System.Windows.Forms.GroupBox gbGhe;
         private System.Windows.Forms.DataGridView dataView;
         private System.Windows.Forms.Button btnLuu;

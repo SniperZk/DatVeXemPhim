@@ -5,20 +5,55 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
+using static DatVeXemPhim.Utils.DataGridViewAutoUpdateOthersCell;
 
 namespace DatVeXemPhim.Utils
 {
+    public class DataGridViewDummyCell : DataGridViewTextBoxCell
+    {
+        private object? _dummyValue;
+        public object? DummyValue
+        {
+            get { return _dummyValue; }
+            set { _dummyValue = value; }
+        }
+
+        public DataGridViewDummyCell() { }
+
+        public override object Clone()
+        {
+            var cell = (DataGridViewDummyCell)base.Clone();
+            cell.DummyValue = DummyValue;
+            return cell;
+        }
+
+        protected override object GetFormattedValue(object value, int rowIndex,
+            ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter,
+            TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
+        {
+            if (DummyValue is DateTime date)
+            {
+                return base.GetFormattedValue(date.ToString("d"), rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
+            }
+            return base.GetFormattedValue(DummyValue, rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
+        }
+    }
+
     public class DataGridViewAutoUpdateOthersCell : DataGridViewTextBoxCell
     {
         public struct Binding
         {
             public string ViewColumnName;
             public required string ColumnName;
+            public int? ViewColumnIndex;
+            public int? ColumnIndex;
         }
 
         public required DataTable Table;
         public required string IdColumnName;
         public List<Binding> Bindings = [];
+
+        private object? oldValue = null;
 
         public DataGridViewAutoUpdateOthersCell() {
         }
@@ -58,6 +93,15 @@ namespace DatVeXemPhim.Utils
                 return formattedValue;
             }
 
+            if (value == oldValue)
+            {
+                return formattedValue;
+            }
+            else
+            {
+                oldValue = value;
+            }
+            
             string idStr = (value != null) ? (string)value : "";
             DataRow? dataRow;
             if (Table.PrimaryKey.Count() > 0)
@@ -70,9 +114,14 @@ namespace DatVeXemPhim.Utils
             }
             if (dataRow != null)
             {
-                foreach (Binding binding in Bindings)
+                for (int i = 0; i < Bindings.Count; i++)
                 {
-                    DataGridView.Rows[rowIndex].Cells[binding.ColumnName].Value = dataRow[binding.ColumnName];
+                    Binding binding = Bindings[i];
+                    if (binding.ColumnIndex == null)
+                    {
+                        binding.ColumnIndex = DataGridView.Columns[binding.ColumnName].Index;
+                    }
+                    ((DataGridViewDummyCell)DataGridView.Rows[rowIndex].Cells[(int)binding.ColumnIndex]).DummyValue = dataRow[binding.ColumnName];
                 }
             }
 

@@ -33,7 +33,7 @@ namespace DatVeXemPhim.Utils
 
         public static bool checkEmptyComboBox(ComboBox comboBox, string msg)
         {
-            if (string.IsNullOrWhiteSpace(comboBox.Text))
+            if (comboBox.SelectedValue == DBNull.Value || comboBox.SelectedValue == null)
             {
                 MessageBox.Show(msg, "Thiếu dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 comboBox.Focus();
@@ -84,7 +84,7 @@ namespace DatVeXemPhim.Utils
                 dataRow = dt.Rows.Find(idStr);
             } else
             {
-                dataRow = Chung.enumerateOnce(from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row);
+                dataRow = enumerateOnce(from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row);
             }
             if (dataRow != null)
             {
@@ -105,7 +105,7 @@ namespace DatVeXemPhim.Utils
             }
             else
             {
-                dataRow = Chung.enumerateOnce(from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row);
+                dataRow = enumerateOnce(from DataRow row in dt.Rows where row.Field<string>(idColumn) == idStr select row);
             }
             if (dataRow != null)
             {
@@ -113,12 +113,41 @@ namespace DatVeXemPhim.Utils
             }
         }
 
-        public static DataGridViewColumn addFakeColumnToView(DataGridView dataView, string name, string title, string displayAfter)
+        public static string formattedStringForViewCell(DataGridView view, int rowIndex, string idColumn, DataTable dt, string targetColumn)
+        {
+            string idStr = view.Rows[rowIndex].Cells[idColumn].Value as string ?? "";
+            DataRow? dataRow = dt.Rows.Find(idStr);
+            if (dataRow != null)
+            {
+                var value = dataRow[targetColumn];
+                switch (value)
+                {
+                    case DateTime date:
+                        {
+                            return date.ToString("d");
+                        }
+                    default :
+                        {
+                            return value.ToString() ?? "";
+                        }
+                }
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public static DataGridViewColumn addFakeColumnToView(DataGridView dataView, string name, string title, string displayAfter, bool useDummyTemplate = true)
         {
             DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
             dataView.Columns.Add(column);
             column.Name = name;
             column.HeaderText = title;
+            if (useDummyTemplate)
+            {
+                column.CellTemplate = new DataGridViewDummyCell();
+            }
             int index = dataView.Columns[displayAfter].DisplayIndex;
 
             DataGridViewColumn? nextColumn = null;

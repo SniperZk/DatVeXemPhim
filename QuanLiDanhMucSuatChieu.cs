@@ -12,51 +12,50 @@ using DatVeXemPhim.Utils;
 
 namespace DatVeXemPhim
 {
-    public class TimeRange
-    {
-        public TimeSpan Start;
-        public TimeSpan Duration;
-        public TimeSpan End {
-            get
-            {
-                return Start + Duration;
-            }
-        }
-
-        public TimeRange() { }
-
-        public TimeRange(DataRow row, DataTable movieTable)
-        {
-            Start = row.Field<TimeSpan>("Giờ bắt đầu");
-            Duration = (TimeSpan)movieTable.Select($"ID_PHIM = '{(string)row["Mã phim"]}'")[0]["THOILUONG"];
-        }
-
-        public bool Overlap(TimeRange otherRange)
-        {
-            if (otherRange.Start >= Start && otherRange.Start <= End)
-            {
-                return true;
-            }
-            if (End >= otherRange.Start && End <= otherRange.End)
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-
-    public class Session
-    {
-        public string roomId = "";
-        public string movieId = "";
-        public DateTime date;
-        public TimeSpan time;
-    }
-
-
-
     public partial class QuanLiDanhMucSuatChieu : Form
     {
+        public class TimeRange
+        {
+            public TimeSpan Start;
+            public TimeSpan Duration;
+            public TimeSpan End
+            {
+                get
+                {
+                    return Start + Duration;
+                }
+            }
+
+            public TimeRange() { }
+
+            public TimeRange(DataRow row, DataTable movieTable)
+            {
+                Start = row.Field<TimeSpan>("Giờ bắt đầu");
+                Duration = (TimeSpan)movieTable.Select($"ID_PHIM = '{(string)row["Mã phim"]}'")[0]["THOILUONG"];
+            }
+
+            public bool Overlap(TimeRange otherRange)
+            {
+                if (otherRange.Start >= Start && otherRange.Start <= End)
+                {
+                    return true;
+                }
+                if (End >= otherRange.Start && End <= otherRange.End)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public class Session
+        {
+            public string roomId = "";
+            public string movieId = "";
+            public DateTime date;
+            public TimeSpan time;
+        }
+
         private readonly static TimeSpan breakTime = new TimeSpan(0, 15, 0);
         private readonly static TimeSpan startOfDay = new TimeSpan(8, 0, 0);
 
@@ -150,7 +149,20 @@ FROM SUATCHIEU
         {
             using (new WaitGuard(Cursors.WaitCursor, btnXoa))
             {
-                Chung.deleteDataGridViewSelectedRows(dataView);
+                foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
+                {
+                    var value = selectedRow.Cells[0].Value;
+                    if (value != DBNull.Value)
+                    {
+                        int count;
+                        if ((count = sqliem.countUsageInTable((string)value, "VE", "ID_SUATCHIEU")) > 0)
+                        {
+                            MessageBox.Show($"Không thể xoá phim này vì suất chiếu này có {count} vé.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            continue;
+                        }
+                    }
+                    ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
+                }
             }
         }
 

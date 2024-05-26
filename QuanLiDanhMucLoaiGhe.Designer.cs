@@ -216,7 +216,7 @@
             Controls.Add(groupBox1);
             Controls.Add(label1);
             Name = "QuanLiDanhMucLoaiGhe";
-            Text = "QuanLiDanhMucLoaiGhe";
+            Text = "Quản lý danh mục loại ghế";
             Load += QuanLiDanhMucLoaiGhe_Load;
             ((System.ComponentModel.ISupportInitialize)dataView).EndInit();
             groupBox1.ResumeLayout(false);

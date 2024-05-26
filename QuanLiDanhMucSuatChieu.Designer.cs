@@ -414,7 +414,7 @@
             Controls.Add(groupBox1);
             Controls.Add(label1);
             Name = "QuanLiDanhMucSuatChieu";
-            Text = "QuanLiDanhMucSuatChieu";
+            Text = "Quản lý danh mục suất chiếu";
             Load += QuanLiDanhMucSuatChieu_Load;
             groupBox1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);

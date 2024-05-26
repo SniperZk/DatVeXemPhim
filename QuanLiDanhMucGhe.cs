@@ -30,8 +30,7 @@ namespace DatVeXemPhim
 ID_GHE AS [Mã ghế],
 ID_LOAIGHE AS [Mã loại ghế],
 ID_PHONGCHIEU AS [Mã phòng],
-VITRI AS [Vị trí],
-TRANGTHAI AS [Trạng thái]
+VITRI AS [Vị trí]
 FROM GHE", connString);
         }
 
@@ -53,7 +52,7 @@ FROM GHE", connString);
                 return;
             }
 
-            table.Rows.Add(null, cbLoaiGhe.SelectedValue, cbPhong.SelectedValue, txtViTri.Text, checkTrangThai.Checked);
+            table.Rows.Add(null, cbLoaiGhe.SelectedValue, cbPhong.SelectedValue, txtViTri.Text);
         }
 
         private void btnSua_Click(object sender, EventArgs e)
@@ -72,7 +71,6 @@ FROM GHE", connString);
                          && row.Field<string>("Mã phòng") == cbPhong.SelectedValue as string
                          && row.Field<string>("Mã loại ghế") == cbLoaiGhe.SelectedValue as string
                          && row.Field<string>("Vị trí") == txtViTri.Text
-                         && (row.Field<string>("Trạng thái") == "True") == checkTrangThai.Checked
                          select row;
             if (result.Any() && Chung.enumerateOnce(result) != selected)
             {
@@ -80,7 +78,7 @@ FROM GHE", connString);
                 return;
             }
 
-            Chung.changeDataRow(selected, NoParam.Value, cbLoaiGhe.SelectedValue, cbPhong.SelectedValue, txtViTri.Text, checkTrangThai.Checked);
+            Chung.changeDataRow(selected, NoParam.Value, cbLoaiGhe.SelectedValue, cbPhong.SelectedValue, txtViTri.Text);
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
@@ -104,7 +102,6 @@ FROM GHE", connString);
             cbLoaiGhe.SelectedValue = row[colIndex++];
             cbPhong.SelectedValue = row[colIndex++];
             txtViTri.Text = (string)row[colIndex++];
-            checkTrangThai.Checked = ((string)row[colIndex++]) == "True";
         }
 
         private void loadOtherTables()
@@ -139,7 +136,11 @@ FROM GHE", connString);
                     return;
                 }
 
+                dataView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
                 dataView.DataSource = table;
+                dataView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+                dataView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             }
         }
 
@@ -180,17 +181,6 @@ FROM GHE", connString);
         {
             btnSua.Enabled = dataView.SelectedRows.Count == 1;
             btnXoa.Enabled = dataView.SelectedRows.Count > 0;
-        }
-
-        private void dataView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (dataView.ColumnCount > 5)
-            {
-                if (e.ColumnIndex == 4)
-                {
-                    e.Value = (e.Value?.ToString() == "True") ? "Đã được đặt" : "Còn trống";
-                }
-            }
         }
 
         private void btnRong_Click(object sender, EventArgs e)
@@ -264,14 +254,14 @@ FROM GHE", connString);
                     {
                         seatType = gheCineMax;
                     }
-                    table.Rows.Add(null, seatType, roomId, pos, false);
+                    table.Rows.Add(null, seatType, roomId, pos);
                 }
             }
         }
 
         private void dataView_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
-            if(dataView.Columns.Count == 5)
+            if(dataView.Columns.Count == 4)
             {
                 DataGridViewColumn column = Chung.addFakeColumnToView(dataView, "TENLOAIGHE", "Tên loại ghế", "Mã loại ghế");
                 column = Chung.addFakeColumnToView(dataView, "TENPHONG", "Tên phòng", "Mã phòng");
