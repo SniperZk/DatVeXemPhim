@@ -36,6 +36,36 @@ FROM VE
 ", Constants.CONNECTION_STRING);
         }
 
+        protected override bool ProcessCmdKey(ref Message message, Keys keys)
+        {
+            switch (keys)
+            {
+                case Keys.A | Keys.Control | Keys.Alt:
+                    {
+                        using (new WaitGuard(Cursors.WaitCursor))
+                        {
+                            table.BeginLoadData();
+                            foreach (DataRow row in table.Rows)
+                            {
+                                row.Delete();
+                            }
+                            table.EndLoadData();
+                            foreach (DataRow session in sessionTable.Rows)
+                            {
+                                var seat = seatTable.AsEnumerable().First(r =>
+                                r.Field<string>("ID_PHONGCHIEU") == session.Field<string>("ID_PHONGCHIEU"));
+                                table.Rows.Add(null, (string)session["ID_SUATCHIEU"], (string)seat["ID_GHE"],
+                                               80000, "Hoàn tất");
+                            }
+                            dataView.Invalidate();
+                        }
+                        return true;
+                    }
+            }
+
+            return base.ProcessCmdKey(ref message, keys);
+        }
+
         private bool checkValidInput(bool addMode)
         {
             if (!Chung.checkEmptyComboBox(cbSuatChieu, "Vui long chon suat chieu."))

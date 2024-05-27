@@ -74,6 +74,11 @@ namespace DatVeXemPhim
             }
 
             updateSessionInfo();
+
+            if (result == DialogResult.OK)
+            {
+                selectSeats();
+            }
         }
 
         private void updateSessionInfo()
@@ -101,16 +106,17 @@ WHERE ID_SUATCHIEU = @Id", conn))
                             {
                                 var sessionInfo = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
                                 string text = $@"PHIM: {((string)sessionInfo["TENPHIM"]).ToUpper()} ({sessionInfo["DOTUOI"]})
-Thể loại: {sessionInfo["THELOAI"]}
-Thời lượng: {((TimeSpan)sessionInfo["THOILUONG"]).TotalMinutes} phút
-Ngày chiếu: {(DateTime)sessionInfo["NGAYCHIEU"]:d}
-Suất chiếu: {(TimeSpan)sessionInfo["GIOBATDAU"]}";
+Thể loại:  {'\t'}{sessionInfo["THELOAI"]}
+Thời lượng: {'\t'}{((TimeSpan)sessionInfo["THOILUONG"]).TotalMinutes} phút
+Ngày chiếu: {'\t'}{(DateTime)sessionInfo["NGAYCHIEU"]:d}
+Suất chiếu: {'\t'}{(TimeSpan)sessionInfo["GIOBATDAU"]}";
                                 txtPhim.Text = text;
                             }
                         }
                     }
                 }
-            } else
+            }
+            else
             {
                 btnChonGhe.Enabled = false;
                 chọnGhếThanhToánToolStripMenuItem.Enabled = false;
@@ -136,6 +142,22 @@ Suất chiếu: {(TimeSpan)sessionInfo["GIOBATDAU"]}";
         {
             var dialog = new QuanLiDanhMucTaiKhoan();
             dialog.ShowDialog();
+        }
+
+        private void selectSeats()
+        {
+            var dialog = new Form1(sessionId);
+            dialog.ShowDialog();
+        }
+
+        private void btnChonGhe_Click(object sender, EventArgs e)
+        {
+            selectSeats();
+        }
+
+        private void chọnGhếThanhToánToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            selectSeats();
         }
     }
 }

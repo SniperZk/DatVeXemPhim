@@ -86,14 +86,6 @@ FROM PHIM", Constants.CONNECTION_STRING);
             {
                 return false;
             }
-            if (!Chung.checkEmptyComboBox(cbTheLoai, "Vui lòng chọn thể loại phim."))
-            {
-                return false;
-            }
-            if (!Chung.checkEmptyComboBox(cbDoTuoi, "Vui lòng chọn độ tuổi."))
-            {
-                return false;
-            }
             if (!Chung.checkDateTimePickerPair(dtKhoiChieu, dtChieuCuoi, "Ngày khởi chiếu phải sớm hơn ngày chiếu cuối."))
             {
                 return false;

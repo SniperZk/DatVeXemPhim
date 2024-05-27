@@ -88,6 +88,7 @@
             chọnGhếThanhToánToolStripMenuItem.Name = "chọnGhếThanhToánToolStripMenuItem";
             chọnGhếThanhToánToolStripMenuItem.Size = new Size(246, 26);
             chọnGhếThanhToánToolStripMenuItem.Text = "Chọn ghế – thanh toán";
+            chọnGhếThanhToánToolStripMenuItem.Click += chọnGhếThanhToánToolStripMenuItem_Click;
             // 
             // quảnLýDanhMụcToolStripMenuItem
             // 
@@ -253,6 +254,7 @@
             btnChonGhe.TabIndex = 3;
             btnChonGhe.Text = "Chọn ghế – thanh toán";
             btnChonGhe.UseVisualStyleBackColor = true;
+            btnChonGhe.Click += btnChonGhe_Click;
             // 
             // btnLichSu
             // 
