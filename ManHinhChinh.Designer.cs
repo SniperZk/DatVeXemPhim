@@ -39,33 +39,20 @@
             danhMụcLoạiGhếToolStripMenuItem = new ToolStripMenuItem();
             danhMụcGhếToolStripMenuItem = new ToolStripMenuItem();
             danhMụcVéToolStripMenuItem = new ToolStripMenuItem();
+            danhMụcTàiKhoảnToolStripMenuItem = new ToolStripMenuItem();
             thốngKêToolStripMenuItem = new ToolStripMenuItem();
             thốngKêDoanhThuToolStripMenuItem = new ToolStripMenuItem();
             tàiKhoảnToolStripMenuItem = new ToolStripMenuItem();
-            tạoTàiKhoảnToolStripMenuItem = new ToolStripMenuItem();
-            đăngNhậpToolStripMenuItem = new ToolStripMenuItem();
             đăngXuấtToolStripMenuItem = new ToolStripMenuItem();
             label1 = new Label();
             label2 = new Label();
             btnChonPhim = new Button();
-            btnDangNhapXuat = new Button();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
-            label6 = new Label();
-            label7 = new Label();
-            label8 = new Label();
             groupBox1 = new GroupBox();
-            label10 = new Label();
-            label9 = new Label();
+            txtPhim = new TextBox();
             groupBox2 = new GroupBox();
-            label13 = new Label();
-            label11 = new Label();
-            label14 = new Label();
-            label12 = new Label();
-            button1 = new Button();
-            button2 = new Button();
-            danhMụcTàiKhoảnToolStripMenuItem = new ToolStripMenuItem();
+            txtGhe = new TextBox();
+            btnChonGhe = new Button();
+            btnLichSu = new Button();
             menuStrip.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -77,7 +64,7 @@
             menuStrip.Items.AddRange(new ToolStripItem[] { đặtVéToolStripMenuItem, quảnLýDanhMụcToolStripMenuItem, thốngKêToolStripMenuItem, tàiKhoảnToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Size = new Size(800, 28);
+            menuStrip.Size = new Size(742, 28);
             menuStrip.TabIndex = 0;
             menuStrip.Text = "menuStrip1";
             // 
@@ -97,6 +84,7 @@
             // 
             // chọnGhếThanhToánToolStripMenuItem
             // 
+            chọnGhếThanhToánToolStripMenuItem.Enabled = false;
             chọnGhếThanhToánToolStripMenuItem.Name = "chọnGhếThanhToánToolStripMenuItem";
             chọnGhếThanhToánToolStripMenuItem.Size = new Size(246, 26);
             chọnGhếThanhToánToolStripMenuItem.Text = "Chọn ghế – thanh toán";
@@ -150,6 +138,13 @@
             danhMụcVéToolStripMenuItem.Text = "Danh mục vé";
             danhMụcVéToolStripMenuItem.Click += danhMụcVéToolStripMenuItem_Click;
             // 
+            // danhMụcTàiKhoảnToolStripMenuItem
+            // 
+            danhMụcTàiKhoảnToolStripMenuItem.Name = "danhMụcTàiKhoảnToolStripMenuItem";
+            danhMụcTàiKhoảnToolStripMenuItem.Size = new Size(245, 26);
+            danhMụcTàiKhoảnToolStripMenuItem.Text = "Danh mục tài khoản";
+            danhMụcTàiKhoảnToolStripMenuItem.Click += danhMụcTàiKhoảnToolStripMenuItem_Click;
+            // 
             // thốngKêToolStripMenuItem
             // 
             thốngKêToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { thốngKêDoanhThuToolStripMenuItem });
@@ -166,27 +161,15 @@
             // tàiKhoảnToolStripMenuItem
             // 
             tàiKhoảnToolStripMenuItem.Alignment = ToolStripItemAlignment.Right;
-            tàiKhoảnToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tạoTàiKhoảnToolStripMenuItem, đăngNhậpToolStripMenuItem, đăngXuấtToolStripMenuItem });
+            tàiKhoảnToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { đăngXuấtToolStripMenuItem });
             tàiKhoảnToolStripMenuItem.Name = "tàiKhoảnToolStripMenuItem";
             tàiKhoảnToolStripMenuItem.Size = new Size(85, 24);
             tàiKhoảnToolStripMenuItem.Text = "Tài khoản";
             // 
-            // tạoTàiKhoảnToolStripMenuItem
-            // 
-            tạoTàiKhoảnToolStripMenuItem.Name = "tạoTàiKhoảnToolStripMenuItem";
-            tạoTàiKhoảnToolStripMenuItem.Size = new Size(224, 26);
-            tạoTàiKhoảnToolStripMenuItem.Text = "Tạo tài khoản";
-            // 
-            // đăngNhậpToolStripMenuItem
-            // 
-            đăngNhậpToolStripMenuItem.Name = "đăngNhậpToolStripMenuItem";
-            đăngNhậpToolStripMenuItem.Size = new Size(224, 26);
-            đăngNhậpToolStripMenuItem.Text = "Đăng nhập";
-            // 
             // đăngXuấtToolStripMenuItem
             // 
             đăngXuấtToolStripMenuItem.Name = "đăngXuấtToolStripMenuItem";
-            đăngXuấtToolStripMenuItem.Size = new Size(224, 26);
+            đăngXuấtToolStripMenuItem.Size = new Size(160, 26);
             đăngXuấtToolStripMenuItem.Text = "Đăng xuất";
             // 
             // label1
@@ -194,7 +177,7 @@
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             label1.ForeColor = Color.DarkGreen;
-            label1.Location = new Point(163, 60);
+            label1.Location = new Point(139, 53);
             label1.Name = "label1";
             label1.Size = new Size(463, 46);
             label1.TabIndex = 1;
@@ -203,7 +186,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(263, 125);
+            label2.Location = new Point(297, 116);
             label2.Name = "label2";
             label2.Size = new Size(148, 20);
             label2.TabIndex = 2;
@@ -211,7 +194,7 @@
             // 
             // btnChonPhim
             // 
-            btnChonPhim.Location = new Point(15, 85);
+            btnChonPhim.Location = new Point(6, 26);
             btnChonPhim.Name = "btnChonPhim";
             btnChonPhim.Size = new Size(188, 33);
             btnChonPhim.TabIndex = 3;
@@ -219,190 +202,77 @@
             btnChonPhim.UseVisualStyleBackColor = true;
             btnChonPhim.Click += btnChonPhim_Click;
             // 
-            // btnDangNhapXuat
-            // 
-            btnDangNhapXuat.Location = new Point(417, 119);
-            btnDangNhapXuat.Name = "btnDangNhapXuat";
-            btnDangNhapXuat.Size = new Size(105, 33);
-            btnDangNhapXuat.TabIndex = 3;
-            btnDangNhapXuat.Text = "Đăng nhập";
-            btnDangNhapXuat.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(15, 23);
-            label3.Name = "label3";
-            label3.Size = new Size(47, 20);
-            label3.TabIndex = 2;
-            label3.Text = "Ngày:";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(17, 53);
-            label4.Name = "label4";
-            label4.Size = new Size(45, 20);
-            label4.TabIndex = 2;
-            label4.Text = "Phim:";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(68, 23);
-            label5.Name = "label5";
-            label5.Size = new Size(79, 20);
-            label5.TabIndex = 2;
-            label5.Text = "Chưa chọn";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(451, 23);
-            label6.Name = "label6";
-            label6.Size = new Size(84, 20);
-            label6.TabIndex = 2;
-            label6.Text = "Suất chiếu: ";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(68, 53);
-            label7.Name = "label7";
-            label7.Size = new Size(79, 20);
-            label7.TabIndex = 2;
-            label7.Text = "Chưa chọn";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(541, 23);
-            label8.Name = "label8";
-            label8.Size = new Size(79, 20);
-            label8.TabIndex = 2;
-            label8.Text = "Chưa chọn";
-            // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(label10);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(label9);
-            groupBox1.Controls.Add(label8);
-            groupBox1.Controls.Add(label5);
-            groupBox1.Controls.Add(label4);
-            groupBox1.Controls.Add(label6);
+            groupBox1.Controls.Add(txtPhim);
             groupBox1.Controls.Add(btnChonPhim);
-            groupBox1.Controls.Add(label7);
-            groupBox1.Location = new Point(38, 167);
+            groupBox1.Location = new Point(22, 154);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(729, 129);
+            groupBox1.Size = new Size(391, 283);
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
             groupBox1.Text = "Chọn phim";
             // 
-            // label10
+            // txtPhim
             // 
-            label10.AutoSize = true;
-            label10.Location = new Point(541, 53);
-            label10.Name = "label10";
-            label10.Size = new Size(79, 20);
-            label10.TabIndex = 2;
-            label10.Text = "Chưa chọn";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(477, 53);
-            label9.Name = "label9";
-            label9.Size = new Size(58, 20);
-            label9.TabIndex = 2;
-            label9.Text = "Phòng: ";
+            txtPhim.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtPhim.Location = new Point(6, 65);
+            txtPhim.Multiline = true;
+            txtPhim.Name = "txtPhim";
+            txtPhim.ReadOnly = true;
+            txtPhim.Size = new Size(379, 212);
+            txtPhim.TabIndex = 4;
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(label13);
-            groupBox2.Controls.Add(label11);
-            groupBox2.Controls.Add(label14);
-            groupBox2.Controls.Add(label12);
-            groupBox2.Controls.Add(button1);
-            groupBox2.Location = new Point(38, 302);
+            groupBox2.Controls.Add(txtGhe);
+            groupBox2.Controls.Add(btnChonGhe);
+            groupBox2.Location = new Point(419, 154);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(284, 125);
+            groupBox2.Size = new Size(311, 208);
             groupBox2.TabIndex = 5;
             groupBox2.TabStop = false;
             groupBox2.Text = "Chọn ghế";
             // 
-            // label13
+            // txtGhe
             // 
-            label13.AutoSize = true;
-            label13.Location = new Point(6, 54);
-            label13.Name = "label13";
-            label13.Size = new Size(75, 20);
-            label13.TabIndex = 2;
-            label13.Text = "Tổng tiền:";
+            txtGhe.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtGhe.Location = new Point(6, 65);
+            txtGhe.Multiline = true;
+            txtGhe.Name = "txtGhe";
+            txtGhe.ReadOnly = true;
+            txtGhe.Size = new Size(299, 137);
+            txtGhe.TabIndex = 4;
             // 
-            // label11
+            // btnChonGhe
             // 
-            label11.AutoSize = true;
-            label11.Location = new Point(6, 23);
-            label11.Name = "label11";
-            label11.Size = new Size(38, 20);
-            label11.TabIndex = 2;
-            label11.Text = "Ghế:";
+            btnChonGhe.Enabled = false;
+            btnChonGhe.Location = new Point(6, 26);
+            btnChonGhe.Name = "btnChonGhe";
+            btnChonGhe.Size = new Size(197, 33);
+            btnChonGhe.TabIndex = 3;
+            btnChonGhe.Text = "Chọn ghế – thanh toán";
+            btnChonGhe.UseVisualStyleBackColor = true;
             // 
-            // label14
+            // btnLichSu
             // 
-            label14.AutoSize = true;
-            label14.Location = new Point(87, 54);
-            label14.Name = "label14";
-            label14.Size = new Size(79, 20);
-            label14.TabIndex = 2;
-            label14.Text = "Chưa chọn";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(87, 23);
-            label12.Name = "label12";
-            label12.Size = new Size(79, 20);
-            label12.TabIndex = 2;
-            label12.Text = "Chưa chọn";
-            // 
-            // button1
-            // 
-            button1.Location = new Point(6, 85);
-            button1.Name = "button1";
-            button1.Size = new Size(197, 33);
-            button1.TabIndex = 3;
-            button1.Text = "Chọn ghế – thanh toán";
-            button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            button2.Location = new Point(656, 312);
-            button2.Name = "button2";
-            button2.Size = new Size(111, 33);
-            button2.TabIndex = 3;
-            button2.Text = "Vé của tôi";
-            button2.UseVisualStyleBackColor = true;
-            // 
-            // danhMụcTàiKhoảnToolStripMenuItem
-            // 
-            danhMụcTàiKhoảnToolStripMenuItem.Name = "danhMụcTàiKhoảnToolStripMenuItem";
-            danhMụcTàiKhoảnToolStripMenuItem.Size = new Size(245, 26);
-            danhMụcTàiKhoảnToolStripMenuItem.Text = "Danh mục tài khoản";
-            danhMụcTàiKhoảnToolStripMenuItem.Click += danhMụcTàiKhoảnToolStripMenuItem_Click;
+            btnLichSu.Enabled = false;
+            btnLichSu.Location = new Point(613, 404);
+            btnLichSu.Name = "btnLichSu";
+            btnLichSu.Size = new Size(111, 33);
+            btnLichSu.TabIndex = 3;
+            btnLichSu.Text = "Vé của tôi";
+            btnLichSu.UseVisualStyleBackColor = true;
             // 
             // ManHinhChinh
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 451);
+            ClientSize = new Size(742, 449);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
-            Controls.Add(btnDangNhapXuat);
             Controls.Add(label2);
-            Controls.Add(button2);
+            Controls.Add(btnLichSu);
             Controls.Add(label1);
             Controls.Add(menuStrip);
             MainMenuStrip = menuStrip;
@@ -428,8 +298,6 @@
         private System.Windows.Forms.ToolStripMenuItem quảnLýDanhMụcToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem thốngKêToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tàiKhoảnToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tạoTàiKhoảnToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem đăngNhậpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem đăngXuấtToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem danhMụcPhimToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem danhMụcPhòngChiếuToolStripMenuItem;
@@ -440,24 +308,13 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnChonPhim;
-        private System.Windows.Forms.Button btnDangNhapXuat;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnChonGhe;
         private System.Windows.Forms.ToolStripMenuItem thốngKêDoanhThuToolStripMenuItem;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnLichSu;
         private ToolStripMenuItem danhMụcTàiKhoảnToolStripMenuItem;
+        private TextBox txtPhim;
+        private TextBox txtGhe;
     }
 }

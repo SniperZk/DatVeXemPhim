@@ -203,21 +203,27 @@ FROM GHE", connString);
 
         private void btnHangLoat_Click(object sender, EventArgs e)
         {
+            if (seatTypeTable.Rows.Count == 0)
+            {
+                MessageBox.Show("Không có dữ liệu loại ghế. Vui lòng thêm các loại ghế trước đã.", "Thiếu dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             var dialog = new ThemGheHangLoatDialog(roomTable.Copy(), seatTypeTable.Copy());
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
                 using (new WaitGuard(Cursors.WaitCursor, btnHangLoat))
                 {
-                    table.BeginLoadData();
                     if (dialog.deleteBeforeInserting())
                     {
+                        table.BeginLoadData();
                         foreach (DataRow row in table.Rows)
                         {
                             row.Delete();
                         }
+                        table.EndLoadData();
                     }
-                    //DataTable tempTable = table.Clone();
                     if (!string.IsNullOrEmpty(dialog.room()))
                     {
                         fillSeatsInRoom(table, dialog.room(), dialog.seatType());
@@ -229,9 +235,7 @@ FROM GHE", connString);
                             fillSeatsInRoom(table, (string)room["ID_PHONGCHIEU"], dialog.seatType());
                         }
                     }
-                    //table.Merge(tempTable, false);
-                    table.EndLoadData();
-                    //dataView.Invalidate();
+                    dataView.Invalidate();
                 }
             }
         }

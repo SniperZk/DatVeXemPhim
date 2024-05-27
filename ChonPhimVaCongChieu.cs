@@ -43,6 +43,7 @@ namespace DatVeXemPhim
 
                 pauseUpdateShowtimeId = false;
                 loadFromSessionId();
+                UpdateSelectedShowtimeId();
             }
         }
 

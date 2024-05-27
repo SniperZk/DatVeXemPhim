@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Microsoft.Data.SqlClient;
+
 namespace DatVeXemPhim
 {
     public partial class ManHinhChinh : Form
@@ -70,9 +72,48 @@ namespace DatVeXemPhim
             {
                 sessionId = dialog.selectedShowtimeId;
             }
-            else
+
+            updateSessionInfo();
+        }
+
+        private void updateSessionInfo()
+        {
+            txtPhim.Clear();
+            if (!string.IsNullOrEmpty(sessionId))
             {
-                sessionId = "";
+                btnChonGhe.Enabled = true;
+                chọnGhếThanhToánToolStripMenuItem.Enabled = true;
+
+                using (SqlConnection conn = new SqlConnection(Constants.CONNECTION_STRING))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(@"SELECT
+PH.TENPHIM, PH.THELOAI, PH.THOILUONG, PH.DOTUOI, SC.NGAYCHIEU, SC.GIOBATDAU
+FROM SUATCHIEU SC
+INNER JOIN PHIM PH
+ON SC.ID_PHIM = PH.ID_PHIM
+WHERE ID_SUATCHIEU = @Id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", sessionId);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                var sessionInfo = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
+                                string text = $@"PHIM: {((string)sessionInfo["TENPHIM"]).ToUpper()} ({sessionInfo["DOTUOI"]})
+Thể loại: {sessionInfo["THELOAI"]}
+Thời lượng: {((TimeSpan)sessionInfo["THOILUONG"]).TotalMinutes} phút
+Ngày chiếu: {(DateTime)sessionInfo["NGAYCHIEU"]:d}
+Suất chiếu: {(TimeSpan)sessionInfo["GIOBATDAU"]}";
+                                txtPhim.Text = text;
+                            }
+                        }
+                    }
+                }
+            } else
+            {
+                btnChonGhe.Enabled = false;
+                chọnGhếThanhToánToolStripMenuItem.Enabled = false;
             }
         }
 
