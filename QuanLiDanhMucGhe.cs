@@ -84,9 +84,22 @@ FROM GHE", connString);
         private void btnXoa_Click(object sender, EventArgs e)
         {
             table.BeginLoadData();
-            foreach (DataGridViewRow row in dataView.SelectedRows)
+            using (new WaitGuard(Cursors.WaitCursor, btnXoa))
             {
-                ((DataRowView)row.DataBoundItem).Row.Delete();
+                foreach (DataGridViewRow selectedRow in dataView.SelectedRows)
+                {
+                    var value = selectedRow.Cells[0].Value;
+                    if (value != DBNull.Value)
+                    {
+                        int count;
+                        if ((count = sqliem.countUsageInTable((string)value, "VE", "ID_GHE")) > 0)
+                        {
+                            MessageBox.Show($"Không thể xoá ghế này vì ghế này xuất hiện trong {count} vé.", "Lỗi xoá dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            continue;
+                        }
+                    }
+                    ((DataRowView)selectedRow.DataBoundItem).Row.Delete();
+                }
             }
             table.EndLoadData();
         }
@@ -204,20 +217,21 @@ FROM GHE", connString);
                             row.Delete();
                         }
                     }
-                    DataTable tempTable = table.Clone();
+                    //DataTable tempTable = table.Clone();
                     if (!string.IsNullOrEmpty(dialog.room()))
                     {
-                        fillSeatsInRoom(tempTable, dialog.room(), dialog.seatType());
+                        fillSeatsInRoom(table, dialog.room(), dialog.seatType());
                     }
                     else
                     {
                         foreach (DataRow room in roomTable.Rows)
                         {
-                            fillSeatsInRoom(tempTable, (string)room["ID_PHONGCHIEU"], dialog.seatType());
+                            fillSeatsInRoom(table, (string)room["ID_PHONGCHIEU"], dialog.seatType());
                         }
                     }
-                    table.Merge(tempTable, false);
+                    //table.Merge(tempTable, false);
                     table.EndLoadData();
+                    //dataView.Invalidate();
                 }
             }
         }
@@ -234,7 +248,7 @@ FROM GHE", connString);
                 string seatType;
                 if (autoSeatType)
                 {
-                    if (c >= 'D' && c <= 'G')
+                    if (c >= 'F')
                     {
                         seatType = gheVip;
                     }
@@ -250,11 +264,14 @@ FROM GHE", connString);
                 for (int i = 1; i <= 12; ++i)
                 {
                     string pos = c + i.ToString();
-                    if (autoSeatType && (c == 'E') && i >= 3 && i <= 10)
+                    if (autoSeatType && c >= 'G' && c <= 'I' && i >= 4 && i <= 9)
                     {
-                        seatType = gheCineMax;
+                        table.Rows.Add(null, gheCineMax, roomId, pos);
                     }
-                    table.Rows.Add(null, seatType, roomId, pos);
+                    else
+                    {
+                        table.Rows.Add(null, seatType, roomId, pos);
+                    }
                 }
             }
         }
