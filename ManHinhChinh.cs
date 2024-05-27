@@ -64,7 +64,7 @@ namespace DatVeXemPhim
 
         private void selectSession()
         {
-            var dialog = new ChonPhimVaCongChieu();
+            var dialog = new ChonPhimVaCongChieu(sessionId);
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {

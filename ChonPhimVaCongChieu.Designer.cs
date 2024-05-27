@@ -49,13 +49,11 @@
             btnThoat = new Button();
             txtKetQua = new TextBox();
             grpSCDC = new GroupBox();
-            pictureBox1 = new PictureBox();
             pictureBox2 = new PictureBox();
             grpLuaChon.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             grpChucNang.SuspendLayout();
             grpSCDC.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
             // 
@@ -125,11 +123,13 @@
             // dtpNgayChieu
             // 
             dtpNgayChieu.CalendarForeColor = Color.Black;
+            dtpNgayChieu.Checked = false;
             dtpNgayChieu.Format = DateTimePickerFormat.Short;
             dtpNgayChieu.Location = new Point(114, 3);
             dtpNgayChieu.Name = "dtpNgayChieu";
             dtpNgayChieu.Size = new Size(144, 27);
             dtpNgayChieu.TabIndex = 1;
+            dtpNgayChieu.Value = new DateTime(2024, 1, 1, 0, 0, 0, 0);
             dtpNgayChieu.ValueChanged += dtpNgayChieu_ValueChanged;
             // 
             // label4
@@ -254,6 +254,7 @@
             btnDatVe.TabIndex = 0;
             btnDatVe.Text = "CHỌN";
             btnDatVe.UseVisualStyleBackColor = false;
+            btnDatVe.Click += btnDatVe_Click;
             // 
             // btnThoat
             // 
@@ -286,17 +287,6 @@
             grpSCDC.TabStop = false;
             grpSCDC.Text = "SUẤT CHIẾU ĐÃ CHỌN";
             // 
-            // pictureBox1
-            // 
-            pictureBox1.BackColor = Color.Thistle;
-            pictureBox1.BackgroundImageLayout = ImageLayout.Center;
-            pictureBox1.Location = new Point(500, 9);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(393, 496);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox1.TabIndex = 5;
-            pictureBox1.TabStop = false;
-            // 
             // pictureBox2
             // 
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
@@ -313,15 +303,14 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Thistle;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(917, 517);
+            ClientSize = new Size(516, 517);
             Controls.Add(pictureBox2);
-            Controls.Add(pictureBox1);
             Controls.Add(grpSCDC);
             Controls.Add(grpChucNang);
             Controls.Add(grpLuaChon);
             Controls.Add(label1);
             Name = "ChonPhimVaCongChieu";
-            Text = "ChonPhimVaCongChieu";
+            Text = "Chọn phim và suất chiếu";
             Load += ChonPhimVaCongChieu_Load;
             grpLuaChon.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
@@ -329,7 +318,6 @@
             grpChucNang.ResumeLayout(false);
             grpSCDC.ResumeLayout(false);
             grpSCDC.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -357,7 +345,6 @@
         private GroupBox grpSCDC;
         private ComboBox cboDoTuoi;
         private CheckBox chkDoTuoi;
-        private PictureBox pictureBox1;
         private PictureBox pictureBox2;
     }
 }

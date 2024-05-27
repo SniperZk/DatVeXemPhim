@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using DatVeXemPhim.Utils;
 using Microsoft.Data.SqlClient;
 
 namespace DatVeXemPhim
@@ -16,25 +16,74 @@ namespace DatVeXemPhim
     {
         SqlConnection conn = new SqlConnection(Constants.CONNECTION_STRING);
         public string selectedShowtimeId = "";
+        private bool pauseUpdateShowtimeId = true;
 
-        public ChonPhimVaCongChieu()
+        public ChonPhimVaCongChieu(string sessionId)
         {
+            selectedShowtimeId = sessionId;
             InitializeComponent();
-            CustomizeDateTimePicker();
         }
 
         private void ChonPhimVaCongChieu_Load(object? sender, EventArgs e)
         {
-            cboFilm.Enabled = false;
-            cboDoTuoi.Enabled = false;
-            cboSuatChieu.Enabled = false;
+            using (new WaitGuard(Cursors.AppStarting))
+            {
+                cboFilm.Enabled = false;
+                cboDoTuoi.Enabled = false;
+                cboSuatChieu.Enabled = false;
 
-            dtpNgayChieu.ValueChanged += dtpNgayChieu_ValueChanged;
-            cboDoTuoi.SelectedIndexChanged += cboDoTuoi_SelectedIndexChanged;
-            cboFilm.SelectedIndexChanged += cboFilm_SelectedIndexChanged;
-            cboSuatChieu.SelectedIndexChanged += cboSuatChieu_SelectedIndexChanged;
-            chkDoTuoi.CheckedChanged += chkDoTuoi_CheckedChanged;
-            btnDatVe.Click += btnDatVe_Click;
+                //dtpNgayChieu.ValueChanged += dtpNgayChieu_ValueChanged;
+                //cboDoTuoi.SelectedIndexChanged += cboDoTuoi_SelectedIndexChanged;
+                //cboFilm.SelectedIndexChanged += cboFilm_SelectedIndexChanged;
+                //cboSuatChieu.SelectedIndexChanged += cboSuatChieu_SelectedIndexChanged;
+                //chkDoTuoi.CheckedChanged += chkDoTuoi_CheckedChanged;
+                //btnDatVe.Click += btnDatVe_Click;
+
+                CustomizeDateTimePicker();
+
+                pauseUpdateShowtimeId = false;
+                loadFromSessionId();
+            }
+        }
+
+        private void loadFromSessionId()
+        {
+            if (string.IsNullOrEmpty(selectedShowtimeId))
+            {
+                return;
+            }
+            try
+            {
+                DateTime date = DateTime.Now.Date;
+                string movieId = "";
+
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+
+                using (SqlCommand cmd = new SqlCommand("SELECT NGAYCHIEU, ID_PHIM, GIOBATDAU FROM SUATCHIEU WHERE ID_SUATCHIEU = @Id", conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", selectedShowtimeId);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            date = reader.GetDateTime(0);
+                            movieId = reader.GetString(1);
+                        }
+                    }
+                }
+
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+
+                dtpNgayChieu.Value = date;
+                cboFilm.SelectedValue = movieId;
+                cboSuatChieu.SelectedValue = selectedShowtimeId;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void dtpNgayChieu_ValueChanged(object? sender, EventArgs e)
@@ -88,7 +137,7 @@ namespace DatVeXemPhim
 
         private void UpdateSelectedShowtimeId()
         {
-            if (cboSuatChieu.SelectedValue != null)
+            if (!pauseUpdateShowtimeId && cboSuatChieu.SelectedValue != null)
             {
                 selectedShowtimeId = cboSuatChieu.SelectedValue.ToString()!;
             }
@@ -366,7 +415,8 @@ namespace DatVeXemPhim
                 }
 
                 reader.Close();
-                conn.Close();
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
             }
             catch (Exception ex)
             {
