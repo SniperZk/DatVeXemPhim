@@ -16,7 +16,7 @@ namespace DatVeXemPhim
 {
     public partial class ManHinhChinh : Form
     {
-        SqLiem sqliem = new SqLiem("", Constants.CONNECTION_STRING);
+        private SqLiem sqliem = new SqLiem("", Constants.CONNECTION_STRING);
 
         string userId = "admin"; // Chưa đăng nhập thì là xâu rỗng
         string sessionId = ""; // Mã suất chiếu
@@ -194,6 +194,12 @@ WHERE TK.TENDANGNHAP = @Id"))
         private void danhMụcVaiTròToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dialog = new QuanLiDanhMucVaiTro();
+            dialog.ShowDialog();
+        }
+
+        private void btnLichSu_Click(object sender, EventArgs e)
+        {
+            var dialog = new LichSuMuaVe(userId);
             dialog.ShowDialog();
         }
     }

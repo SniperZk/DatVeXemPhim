@@ -266,13 +266,13 @@
             // 
             // btnLichSu
             // 
-            btnLichSu.Enabled = false;
             btnLichSu.Location = new Point(613, 404);
             btnLichSu.Name = "btnLichSu";
             btnLichSu.Size = new Size(111, 33);
             btnLichSu.TabIndex = 3;
             btnLichSu.Text = "Vé của tôi";
             btnLichSu.UseVisualStyleBackColor = true;
+            btnLichSu.Click += btnLichSu_Click;
             // 
             // ManHinhChinh
             // 
