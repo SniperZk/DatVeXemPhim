@@ -18,12 +18,14 @@ namespace DatVeXemPhim
     {
         private SqLiem sqliem = new SqLiem("", Constants.CONNECTION_STRING);
 
-        string userId = "admin"; // Chưa đăng nhập thì là xâu rỗng
+        public bool shouldExit = true;
+        public string userId = "admin"; // Chưa đăng nhập thì là xâu rỗng
         string sessionId = ""; // Mã suất chiếu
         List<string> seatIds = []; // Các mã ghế
 
-        public ManHinhChinh()
+        public ManHinhChinh(string userId)
         {
+            this.userId = userId;
             InitializeComponent();
         }
 
@@ -142,7 +144,7 @@ Suất chiếu: {'\t'}{(TimeSpan)sessionInfo["GIOBATDAU"]}";
                 using (SqlCommand cmd = new SqlCommand(@"SELECT TK.*, VT.TENVAITRO FROM TAIKHOAN TK
 INNER JOIN VAITRO VT
 ON TK.ID_VAITRO = VT.ID_VAITRO
-WHERE TK.TENDANGNHAP = @Id"))
+WHERE TK.ID_TAIKHOAN = @Id"))
                 {
                     cmd.Parameters.AddWithValue("@Id", userId);
                     var userInfo = sqliem.selectFirstToDict(cmd);
@@ -206,7 +208,7 @@ WHERE TK.TENDANGNHAP = @Id"))
 
         private void ManHinhChinh_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            if (e.CloseReason == CloseReason.UserClosing && shouldExit)
             {
                 DialogResult result = MessageBox.Show("Bạn có chắc là muốn thoát chương trình không? Tài khoản của bạn sẽ được đăng xuất trước khi thoát chương trình.", "Xác nhận đóng chương trình", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.Cancel)
@@ -214,6 +216,12 @@ WHERE TK.TENDANGNHAP = @Id"))
                     e.Cancel = true;
                 }
             }
+        }
+
+        private void đăngXuấtToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            shouldExit = false;
+            Close();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace DatVeXemPhim
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.Run(new ManHinhChinh());
+            Application.Run(new Login());
         }
     }
 }
