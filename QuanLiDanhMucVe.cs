@@ -68,11 +68,11 @@ FROM VE
 
         private bool checkValidInput(bool addMode)
         {
-            if (!Chung.checkEmptyComboBox(cbSuatChieu, "Vui long chon suat chieu."))
+            if (!Chung.checkEmptyComboBox(cbSuatChieu, "Vui lòng chọn suất chiếu."))
             {
                 return false;
             }
-            if (!Chung.checkEmptyComboBox(cbGhe, "Vui long chon ghe."))
+            if (!Chung.checkEmptyComboBox(cbGhe, "Vui lòng chọn ghế."))
             {
                 return false;
             }

@@ -214,7 +214,7 @@
             // numGia
             // 
             numGia.Anchor = AnchorStyles.Left;
-            numGia.Increment = new decimal(new int[] { 50000, 0, 0, 0 });
+            numGia.Increment = new decimal(new int[] { 20000, 0, 0, 0 });
             numGia.Location = new Point(3, 4);
             numGia.Margin = new Padding(3, 4, 3, 4);
             numGia.Maximum = new decimal(new int[] { 1000000000, 0, 0, 0 });

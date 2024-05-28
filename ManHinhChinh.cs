@@ -159,5 +159,11 @@ Suất chiếu: {'\t'}{(TimeSpan)sessionInfo["GIOBATDAU"]}";
         {
             selectSeats();
         }
+
+        private void danhMụcVaiTròToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new QuanLiDanhMucVaiTro();
+            dialog.ShowDialog();
+        }
     }
 }

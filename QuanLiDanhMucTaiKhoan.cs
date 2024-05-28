@@ -83,6 +83,12 @@ FROM TAIKHOAN", Constants.CONNECTION_STRING);
             {
                 return false;
             }
+            DataRow? row = table.Select($"[Tên đăng nhập] = '{txtTenDangNhap.Text.Trim()}'").FirstOrDefault();
+            if (row != null && (addMode || row != ((DataRowView)dataView.SelectedRows[0].DataBoundItem).Row))
+            {
+                MessageBox.Show("Tên đăng nhập này đã tồn tại.", "Lỗi nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
             if (!Chung.checkEmptyTextBox(txtMatKhau, "Vui lòng nhập mật khẩu."))
             {
                 return false;
@@ -275,6 +281,12 @@ FROM TAIKHOAN", Constants.CONNECTION_STRING);
                     }
             }
 
+            string username = faker.randomPronounceableName(10);
+            while (table.Select($"[Tên đăng nhập] = '{username}'").Any())
+            {
+                username = faker.randomPronounceableName(10);
+            }
+
             return new Account()
             {
                 role = (string)roleTable.Select($"TENVAITRO = 'Khách hàng'").FirstOrDefault()![0],
@@ -284,7 +296,7 @@ FROM TAIKHOAN", Constants.CONNECTION_STRING);
                 dateOfBirth = faker.randomDate(new DateTime(1900, 1, 1), DateTime.Now.Date),
                 email = faker.randomEmail(fullName),
                 address = faker.randomProvince(),
-                username = faker.randomPronounceableName(10),
+                username = username,
                 password = "123456789"
             };
         }

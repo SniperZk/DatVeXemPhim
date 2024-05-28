@@ -53,6 +53,7 @@
             txtGhe = new TextBox();
             btnChonGhe = new Button();
             btnLichSu = new Button();
+            danhMụcVaiTròToolStripMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -92,7 +93,7 @@
             // 
             // quảnLýDanhMụcToolStripMenuItem
             // 
-            quảnLýDanhMụcToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { danhMụcPhimToolStripMenuItem, danhMụcPhòngChiếuToolStripMenuItem, danhMụcSuấtChiếuToolStripMenuItem, danhMụcLoạiGhếToolStripMenuItem, danhMụcGhếToolStripMenuItem, danhMụcVéToolStripMenuItem, danhMụcTàiKhoảnToolStripMenuItem });
+            quảnLýDanhMụcToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { danhMụcPhimToolStripMenuItem, danhMụcPhòngChiếuToolStripMenuItem, danhMụcSuấtChiếuToolStripMenuItem, danhMụcLoạiGhếToolStripMenuItem, danhMụcGhếToolStripMenuItem, danhMụcVéToolStripMenuItem, danhMụcVaiTròToolStripMenuItem, danhMụcTàiKhoảnToolStripMenuItem });
             quảnLýDanhMụcToolStripMenuItem.Name = "quảnLýDanhMụcToolStripMenuItem";
             quảnLýDanhMụcToolStripMenuItem.Size = new Size(90, 24);
             quảnLýDanhMụcToolStripMenuItem.Text = "Danh mục";
@@ -266,6 +267,13 @@
             btnLichSu.Text = "Vé của tôi";
             btnLichSu.UseVisualStyleBackColor = true;
             // 
+            // danhMụcVaiTròToolStripMenuItem
+            // 
+            danhMụcVaiTròToolStripMenuItem.Name = "danhMụcVaiTròToolStripMenuItem";
+            danhMụcVaiTròToolStripMenuItem.Size = new Size(245, 26);
+            danhMụcVaiTròToolStripMenuItem.Text = "Danh mục vai trò";
+            danhMụcVaiTròToolStripMenuItem.Click += danhMụcVaiTròToolStripMenuItem_Click;
+            // 
             // ManHinhChinh
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -318,5 +326,6 @@
         private ToolStripMenuItem danhMụcTàiKhoảnToolStripMenuItem;
         private TextBox txtPhim;
         private TextBox txtGhe;
+        private ToolStripMenuItem danhMụcVaiTròToolStripMenuItem;
     }
 }
