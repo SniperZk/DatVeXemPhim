@@ -174,8 +174,13 @@ WHERE TK.ID_TAIKHOAN = @Id"))
 
         private void selectSeats()
         {
-            var dialog = new Form1(sessionId);
-            dialog.ShowDialog();
+            var dialog = new DatGhe(sessionId, userId);
+            DialogResult result = dialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                MessageBox.Show("Mua vé thành công. Xem vé đã mua ở mục 'vé của tôi'", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                txtPhim.Clear();
+            }
         }
 
         private void btnChonGhe_Click(object sender, EventArgs e)

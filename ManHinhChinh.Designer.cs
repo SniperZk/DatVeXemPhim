@@ -50,13 +50,10 @@
             btnChonPhim = new Button();
             groupBox1 = new GroupBox();
             txtPhim = new TextBox();
-            groupBox2 = new GroupBox();
-            txtGhe = new TextBox();
             btnChonGhe = new Button();
             btnLichSu = new Button();
             menuStrip.SuspendLayout();
             groupBox1.SuspendLayout();
-            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
@@ -179,17 +176,17 @@
             // đăngXuấtToolStripMenuItem
             // 
             đăngXuấtToolStripMenuItem.Name = "đăngXuấtToolStripMenuItem";
-            đăngXuấtToolStripMenuItem.Size = new Size(224, 26);
+            đăngXuấtToolStripMenuItem.Size = new Size(160, 26);
             đăngXuấtToolStripMenuItem.Text = "Đăng xuất";
             đăngXuấtToolStripMenuItem.Click += đăngXuấtToolStripMenuItem_Click;
             // 
             // label1
             // 
-            label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label1.Anchor = AnchorStyles.Top;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             label1.ForeColor = Color.DarkGreen;
-            label1.Location = new Point(139, 48);
+            label1.Location = new Point(150, 48);
             label1.Name = "label1";
             label1.Size = new Size(463, 46);
             label1.TabIndex = 1;
@@ -197,9 +194,9 @@
             // 
             // labelGreeting
             // 
-            labelGreeting.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            labelGreeting.Anchor = AnchorStyles.Top;
             labelGreeting.AutoSize = true;
-            labelGreeting.Location = new Point(297, 111);
+            labelGreeting.Location = new Point(309, 111);
             labelGreeting.Name = "labelGreeting";
             labelGreeting.Size = new Size(148, 20);
             labelGreeting.TabIndex = 2;
@@ -219,13 +216,14 @@
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(txtPhim);
+            groupBox1.Controls.Add(btnChonGhe);
             groupBox1.Controls.Add(btnChonPhim);
-            groupBox1.Location = new Point(18, 148);
+            groupBox1.Location = new Point(123, 148);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(391, 283);
+            groupBox1.Size = new Size(391, 358);
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Chọn phim";
+            groupBox1.Text = "Đặt vé";
             // 
             // txtPhim
             // 
@@ -234,35 +232,14 @@
             txtPhim.Multiline = true;
             txtPhim.Name = "txtPhim";
             txtPhim.ReadOnly = true;
-            txtPhim.Size = new Size(379, 212);
+            txtPhim.Size = new Size(379, 241);
             txtPhim.TabIndex = 4;
-            // 
-            // groupBox2
-            // 
-            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            groupBox2.Controls.Add(txtGhe);
-            groupBox2.Controls.Add(btnChonGhe);
-            groupBox2.Location = new Point(419, 148);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(311, 208);
-            groupBox2.TabIndex = 5;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Chọn ghế";
-            // 
-            // txtGhe
-            // 
-            txtGhe.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            txtGhe.Location = new Point(6, 65);
-            txtGhe.Multiline = true;
-            txtGhe.Name = "txtGhe";
-            txtGhe.ReadOnly = true;
-            txtGhe.Size = new Size(299, 137);
-            txtGhe.TabIndex = 4;
             // 
             // btnChonGhe
             // 
+            btnChonGhe.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnChonGhe.Enabled = false;
-            btnChonGhe.Location = new Point(6, 26);
+            btnChonGhe.Location = new Point(6, 319);
             btnChonGhe.Name = "btnChonGhe";
             btnChonGhe.Size = new Size(197, 33);
             btnChonGhe.TabIndex = 3;
@@ -273,7 +250,7 @@
             // btnLichSu
             // 
             btnLichSu.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnLichSu.Location = new Point(613, 398);
+            btnLichSu.Location = new Point(520, 467);
             btnLichSu.Name = "btnLichSu";
             btnLichSu.Size = new Size(111, 33);
             btnLichSu.TabIndex = 3;
@@ -285,8 +262,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(742, 449);
-            Controls.Add(groupBox2);
+            ClientSize = new Size(742, 524);
             Controls.Add(groupBox1);
             Controls.Add(labelGreeting);
             Controls.Add(btnLichSu);
@@ -302,8 +278,6 @@
             menuStrip.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -328,13 +302,11 @@
         private System.Windows.Forms.Label labelGreeting;
         private System.Windows.Forms.Button btnChonPhim;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnChonGhe;
         private System.Windows.Forms.ToolStripMenuItem thốngKêDoanhThuToolStripMenuItem;
         private System.Windows.Forms.Button btnLichSu;
         private ToolStripMenuItem danhMụcTàiKhoảnToolStripMenuItem;
         private TextBox txtPhim;
-        private TextBox txtGhe;
         private ToolStripMenuItem danhMụcVaiTròToolStripMenuItem;
     }
 }
