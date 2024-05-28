@@ -10,13 +10,17 @@ using System.Windows.Forms;
 
 using Microsoft.Data.SqlClient;
 
+using DatVeXemPhim.Utils;
+
 namespace DatVeXemPhim
 {
     public partial class ManHinhChinh : Form
     {
-        string userId = ""; // Chưa đăng nhập thì là xâu rỗng
+        SqLiem sqliem = new SqLiem("", Constants.CONNECTION_STRING);
+
+        string userId = "admin"; // Chưa đăng nhập thì là xâu rỗng
         string sessionId = ""; // Mã suất chiếu
-        string seatId = ""; // Mã ghế
+        List<string> seatIds = []; // Các mã ghế
 
         public ManHinhChinh()
         {
@@ -89,31 +93,28 @@ namespace DatVeXemPhim
                 btnChonGhe.Enabled = true;
                 chọnGhếThanhToánToolStripMenuItem.Enabled = true;
 
-                using (SqlConnection conn = new SqlConnection(Constants.CONNECTION_STRING))
+                try
                 {
-                    conn.Open();
                     using (SqlCommand cmd = new SqlCommand(@"SELECT
 PH.TENPHIM, PH.THELOAI, PH.THOILUONG, PH.DOTUOI, SC.NGAYCHIEU, SC.GIOBATDAU
 FROM SUATCHIEU SC
 INNER JOIN PHIM PH
 ON SC.ID_PHIM = PH.ID_PHIM
-WHERE ID_SUATCHIEU = @Id", conn))
+WHERE ID_SUATCHIEU = @Id"))
                     {
                         cmd.Parameters.AddWithValue("@Id", sessionId);
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                var sessionInfo = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
-                                string text = $@"PHIM: {((string)sessionInfo["TENPHIM"]).ToUpper()} ({sessionInfo["DOTUOI"]})
+                        var sessionInfo = sqliem.selectFirstToDict(cmd);
+                        string text = $@"PHIM: {((string)sessionInfo["TENPHIM"]).ToUpper()} ({sessionInfo["DOTUOI"]})
 Thể loại:  {'\t'}{sessionInfo["THELOAI"]}
 Thời lượng: {'\t'}{((TimeSpan)sessionInfo["THOILUONG"]).TotalMinutes} phút
 Ngày chiếu: {'\t'}{(DateTime)sessionInfo["NGAYCHIEU"]:d}
 Suất chiếu: {'\t'}{(TimeSpan)sessionInfo["GIOBATDAU"]}";
-                                txtPhim.Text = text;
-                            }
-                        }
+                        txtPhim.Text = text;
                     }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -133,9 +134,39 @@ Suất chiếu: {'\t'}{(TimeSpan)sessionInfo["GIOBATDAU"]}";
             selectSession();
         }
 
+        private void setAdminMode(bool adminMode)
+        {
+            danhMụcToolStripMenuItem.Enabled = adminMode;
+            thốngKêToolStripMenuItem.Enabled = adminMode;
+        }
+
+        private void loadUser()
+        {
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(@"SELECT TK.*, VT.TENVAITRO FROM TAIKHOAN TK
+INNER JOIN VAITRO VT
+ON TK.ID_VAITRO = VT.ID_VAITRO
+WHERE TK.TENDANGNHAP = @Id"))
+                {
+                    cmd.Parameters.AddWithValue("@Id", userId);
+                    var userInfo = sqliem.selectFirstToDict(cmd);
+
+                    labelGreeting.Text = $"Xin chào {userInfo["HOTEN"]} ({userInfo["TENDANGNHAP"]}).";
+
+                    string roleName = ((string)userInfo["TENVAITRO"]).ToLower();
+                    setAdminMode(roleName.Contains("admin") || roleName == "quản trị viên");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Lỗi kết nối CSDL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void ManHinhChinh_Load(object sender, EventArgs e)
         {
-
+            loadUser();
         }
 
         private void danhMụcTàiKhoảnToolStripMenuItem_Click(object sender, EventArgs e)

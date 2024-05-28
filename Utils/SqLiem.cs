@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Microsoft.Data.SqlClient;
 
 namespace DatVeXemPhim.Utils
@@ -81,6 +82,26 @@ namespace DatVeXemPhim.Utils
                     table.PrimaryKey = [table.Columns[0]];
                 }
                 return table;
+            }
+        }
+
+        public Dictionary<string, object> selectFirstToDict(SqlCommand cmd)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+                cmd.Connection = conn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
+                    }
+                    else
+                    {
+                        return new Dictionary<string, object>();
+                    }
+                }
             }
         }
     }

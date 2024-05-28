@@ -32,20 +32,21 @@
             đặtVéToolStripMenuItem = new ToolStripMenuItem();
             chọnPhimSuấtChiếuToolStripMenuItem = new ToolStripMenuItem();
             chọnGhếThanhToánToolStripMenuItem = new ToolStripMenuItem();
-            quảnLýDanhMụcToolStripMenuItem = new ToolStripMenuItem();
+            danhMụcToolStripMenuItem = new ToolStripMenuItem();
             danhMụcPhimToolStripMenuItem = new ToolStripMenuItem();
             danhMụcPhòngChiếuToolStripMenuItem = new ToolStripMenuItem();
             danhMụcSuấtChiếuToolStripMenuItem = new ToolStripMenuItem();
             danhMụcLoạiGhếToolStripMenuItem = new ToolStripMenuItem();
             danhMụcGhếToolStripMenuItem = new ToolStripMenuItem();
             danhMụcVéToolStripMenuItem = new ToolStripMenuItem();
+            danhMụcVaiTròToolStripMenuItem = new ToolStripMenuItem();
             danhMụcTàiKhoảnToolStripMenuItem = new ToolStripMenuItem();
             thốngKêToolStripMenuItem = new ToolStripMenuItem();
             thốngKêDoanhThuToolStripMenuItem = new ToolStripMenuItem();
             tàiKhoảnToolStripMenuItem = new ToolStripMenuItem();
             đăngXuấtToolStripMenuItem = new ToolStripMenuItem();
             label1 = new Label();
-            label2 = new Label();
+            labelGreeting = new Label();
             btnChonPhim = new Button();
             groupBox1 = new GroupBox();
             txtPhim = new TextBox();
@@ -53,7 +54,6 @@
             txtGhe = new TextBox();
             btnChonGhe = new Button();
             btnLichSu = new Button();
-            danhMụcVaiTròToolStripMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -62,7 +62,7 @@
             // menuStrip
             // 
             menuStrip.ImageScalingSize = new Size(20, 20);
-            menuStrip.Items.AddRange(new ToolStripItem[] { đặtVéToolStripMenuItem, quảnLýDanhMụcToolStripMenuItem, thốngKêToolStripMenuItem, tàiKhoảnToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { đặtVéToolStripMenuItem, danhMụcToolStripMenuItem, thốngKêToolStripMenuItem, tàiKhoảnToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(742, 28);
@@ -91,12 +91,12 @@
             chọnGhếThanhToánToolStripMenuItem.Text = "Chọn ghế – thanh toán";
             chọnGhếThanhToánToolStripMenuItem.Click += chọnGhếThanhToánToolStripMenuItem_Click;
             // 
-            // quảnLýDanhMụcToolStripMenuItem
+            // danhMụcToolStripMenuItem
             // 
-            quảnLýDanhMụcToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { danhMụcPhimToolStripMenuItem, danhMụcPhòngChiếuToolStripMenuItem, danhMụcSuấtChiếuToolStripMenuItem, danhMụcLoạiGhếToolStripMenuItem, danhMụcGhếToolStripMenuItem, danhMụcVéToolStripMenuItem, danhMụcVaiTròToolStripMenuItem, danhMụcTàiKhoảnToolStripMenuItem });
-            quảnLýDanhMụcToolStripMenuItem.Name = "quảnLýDanhMụcToolStripMenuItem";
-            quảnLýDanhMụcToolStripMenuItem.Size = new Size(90, 24);
-            quảnLýDanhMụcToolStripMenuItem.Text = "Danh mục";
+            danhMụcToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { danhMụcPhimToolStripMenuItem, danhMụcPhòngChiếuToolStripMenuItem, danhMụcSuấtChiếuToolStripMenuItem, danhMụcLoạiGhếToolStripMenuItem, danhMụcGhếToolStripMenuItem, danhMụcVéToolStripMenuItem, danhMụcVaiTròToolStripMenuItem, danhMụcTàiKhoảnToolStripMenuItem });
+            danhMụcToolStripMenuItem.Name = "danhMụcToolStripMenuItem";
+            danhMụcToolStripMenuItem.Size = new Size(90, 24);
+            danhMụcToolStripMenuItem.Text = "Danh mục";
             // 
             // danhMụcPhimToolStripMenuItem
             // 
@@ -139,6 +139,13 @@
             danhMụcVéToolStripMenuItem.Size = new Size(245, 26);
             danhMụcVéToolStripMenuItem.Text = "Danh mục vé";
             danhMụcVéToolStripMenuItem.Click += danhMụcVéToolStripMenuItem_Click;
+            // 
+            // danhMụcVaiTròToolStripMenuItem
+            // 
+            danhMụcVaiTròToolStripMenuItem.Name = "danhMụcVaiTròToolStripMenuItem";
+            danhMụcVaiTròToolStripMenuItem.Size = new Size(245, 26);
+            danhMụcVaiTròToolStripMenuItem.Text = "Danh mục vai trò";
+            danhMụcVaiTròToolStripMenuItem.Click += danhMụcVaiTròToolStripMenuItem_Click;
             // 
             // danhMụcTàiKhoảnToolStripMenuItem
             // 
@@ -185,14 +192,14 @@
             label1.TabIndex = 1;
             label1.Text = "Phần mềm đặt vé xem phim";
             // 
-            // label2
+            // labelGreeting
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(297, 116);
-            label2.Name = "label2";
-            label2.Size = new Size(148, 20);
-            label2.TabIndex = 2;
-            label2.Text = "Bạn chưa đăng nhập.";
+            labelGreeting.AutoSize = true;
+            labelGreeting.Location = new Point(297, 116);
+            labelGreeting.Name = "labelGreeting";
+            labelGreeting.Size = new Size(148, 20);
+            labelGreeting.TabIndex = 2;
+            labelGreeting.Text = "Bạn chưa đăng nhập.";
             // 
             // btnChonPhim
             // 
@@ -267,13 +274,6 @@
             btnLichSu.Text = "Vé của tôi";
             btnLichSu.UseVisualStyleBackColor = true;
             // 
-            // danhMụcVaiTròToolStripMenuItem
-            // 
-            danhMụcVaiTròToolStripMenuItem.Name = "danhMụcVaiTròToolStripMenuItem";
-            danhMụcVaiTròToolStripMenuItem.Size = new Size(245, 26);
-            danhMụcVaiTròToolStripMenuItem.Text = "Danh mục vai trò";
-            danhMụcVaiTròToolStripMenuItem.Click += danhMụcVaiTròToolStripMenuItem_Click;
-            // 
             // ManHinhChinh
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -281,7 +281,7 @@
             ClientSize = new Size(742, 449);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
-            Controls.Add(label2);
+            Controls.Add(labelGreeting);
             Controls.Add(btnLichSu);
             Controls.Add(label1);
             Controls.Add(menuStrip);
@@ -305,7 +305,7 @@
         private System.Windows.Forms.ToolStripMenuItem đặtVéToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem chọnPhimSuấtChiếuToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem chọnGhếThanhToánToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem quảnLýDanhMụcToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem danhMụcToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem thốngKêToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tàiKhoảnToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem đăngXuấtToolStripMenuItem;
@@ -316,7 +316,7 @@
         private System.Windows.Forms.ToolStripMenuItem danhMụcGhếToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem danhMụcVéToolStripMenuItem;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelGreeting;
         private System.Windows.Forms.Button btnChonPhim;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
