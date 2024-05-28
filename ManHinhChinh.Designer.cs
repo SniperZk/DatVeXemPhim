@@ -166,6 +166,7 @@
             thốngKêDoanhThuToolStripMenuItem.Name = "thốngKêDoanhThuToolStripMenuItem";
             thốngKêDoanhThuToolStripMenuItem.Size = new Size(224, 26);
             thốngKêDoanhThuToolStripMenuItem.Text = "Thống kê doanh thu";
+            thốngKêDoanhThuToolStripMenuItem.Click += thốngKêDoanhThuToolStripMenuItem_Click;
             // 
             // tàiKhoảnToolStripMenuItem
             // 
@@ -183,10 +184,11 @@
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             label1.ForeColor = Color.DarkGreen;
-            label1.Location = new Point(139, 53);
+            label1.Location = new Point(139, 48);
             label1.Name = "label1";
             label1.Size = new Size(463, 46);
             label1.TabIndex = 1;
@@ -194,8 +196,9 @@
             // 
             // labelGreeting
             // 
+            labelGreeting.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             labelGreeting.AutoSize = true;
-            labelGreeting.Location = new Point(297, 116);
+            labelGreeting.Location = new Point(297, 111);
             labelGreeting.Name = "labelGreeting";
             labelGreeting.Size = new Size(148, 20);
             labelGreeting.TabIndex = 2;
@@ -213,9 +216,10 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(txtPhim);
             groupBox1.Controls.Add(btnChonPhim);
-            groupBox1.Location = new Point(22, 154);
+            groupBox1.Location = new Point(18, 148);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(391, 283);
             groupBox1.TabIndex = 4;
@@ -234,9 +238,10 @@
             // 
             // groupBox2
             // 
+            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             groupBox2.Controls.Add(txtGhe);
             groupBox2.Controls.Add(btnChonGhe);
-            groupBox2.Location = new Point(419, 154);
+            groupBox2.Location = new Point(419, 148);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(311, 208);
             groupBox2.TabIndex = 5;
@@ -266,7 +271,8 @@
             // 
             // btnLichSu
             // 
-            btnLichSu.Location = new Point(613, 404);
+            btnLichSu.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnLichSu.Location = new Point(613, 398);
             btnLichSu.Name = "btnLichSu";
             btnLichSu.Size = new Size(111, 33);
             btnLichSu.TabIndex = 3;
@@ -287,7 +293,9 @@
             Controls.Add(menuStrip);
             MainMenuStrip = menuStrip;
             Name = "ManHinhChinh";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Trang chủ";
+            FormClosing += ManHinhChinh_FormClosing;
             Load += ManHinhChinh_Load;
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();

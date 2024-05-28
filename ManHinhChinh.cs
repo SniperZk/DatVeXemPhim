@@ -27,11 +27,6 @@ namespace DatVeXemPhim
             InitializeComponent();
         }
 
-        private void mToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void danhMụcPhimToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dialog = new QuanLiDanhMucPhim();
@@ -201,6 +196,24 @@ WHERE TK.TENDANGNHAP = @Id"))
         {
             var dialog = new LichSuMuaVe(userId);
             dialog.ShowDialog();
+        }
+
+        private void thốngKêDoanhThuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new BaoCaoThongKe();
+            dialog.ShowDialog();
+        }
+
+        private void ManHinhChinh_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                DialogResult result = MessageBox.Show("Bạn có chắc là muốn thoát chương trình không? Tài khoản của bạn sẽ được đăng xuất trước khi thoát chương trình.", "Xác nhận đóng chương trình", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }
